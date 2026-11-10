@@ -181,13 +181,13 @@ Each step has an output and an exit gate. A step doesn't start until the previou
 - [x] `architecture.md`: system context, components, data model, request flows (login, onboarding, dashboard, fact fetch with both cache layers, edit movie), security model, failure modes.
 - **Gate:** owner approves both docs.
 
-### Step 4 - Specification → `srs.md`
+### Step 4 - Specification → `srs.md` ✅
 
-- [ ] Functional requirements with IDs, each traceable to §5 above.
-- [ ] Non-functional: security, performance, reliability, accessibility basics.
-- [ ] API contracts (request/response/error types) for all endpoints.
-- [ ] Data schema, validation rules, state machines (fact fetch, edit flow).
-- [ ] Acceptance criteria per requirement.
+- [x] Functional requirements with IDs, each traceable to §5 above.
+- [x] Non-functional: security, performance, reliability, accessibility basics.
+- [x] API contracts (request/response/error types) for all endpoints.
+- [x] Data schema, validation rules, state machines (fact fetch, edit flow).
+- [x] Acceptance criteria per requirement.
 - **Gate:** owner approves; no open load-bearing questions.
 
 ### Step 5 - Build plan → `plan.md`
