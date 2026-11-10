@@ -27,7 +27,6 @@
   --font-ui: var(--font-general-sans), "Aeonik Pro", ui-sans-serif, system-ui, sans-serif;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-
 }
 
 /* shadcn and Cult UI components read these names, so point them at the brand tokens. */
@@ -114,4 +113,20 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Toast icons by type. Success and error are filled dots; info and warning are outline glyphs. */
+.nt-shell .nt-icon-success {
+  background: var(--color-mint);
+  color: var(--color-carbon);
+}
+.nt-shell .nt-icon-error {
+  background: #ef4444;
+  color: var(--color-paper);
+}
+.nt-shell .nt-icon-info {
+  color: var(--color-blue);
+}
+.nt-shell .nt-icon-warning {
+  color: var(--color-sun);
 }

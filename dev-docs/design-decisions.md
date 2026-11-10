@@ -446,3 +446,44 @@ New entries follow the ADR format in `CLAUDE.md`.
     - None of it animates under reduced motion.
 - **Why:** The owner's direction.
 - **Consequences:** The countdown test now waits for the exit animation of the "New fact in" label before checking the ready state.
+
+## ADR-040: Rolling-paper ticket, colored toast icons, centered landing column
+
+- **Date:** 2026-11-10 **Status:** accepted
+- **Context:** The owner asked for:
+  - the landing title centered on phones, and a centered 1500px landing column;
+  - the ticket's semicircle cutouts on mobile too;
+  - a paper-roll animation while a fact generates;
+  - toast icons colored by type.
+- **Options:** none; the owner's direction.
+- **Decision:**
+  - **Landing:** header, content and the footer's contents sit in `max-w-[1500px] mx-auto`. On phones the title and tagline center horizontally and vertically.
+  - **Mobile ticket:** half-circle notches at both ends of the horizontal seam.
+  - **`RollingPaper`:** a `motion` value clips the fact from the left while a cylinder rides the clip edge and thickens. New fact rolls the paper left to right and shows "Printing a new fact" behind it; the result unrolls right to left. The old ticket wobble is removed.
+  - **Toast icons:** styled through notch-toast's `nt-icon-<type>` classes in `globals.css`. Success is Mint green and error is red (filled dots); info is blue and warning is Sunburst yellow (glyph color).
+- **Why:** The owner's direction.
+- **Consequences:**
+  - The roll respects reduced motion, jumping straight to the end state.
+  - The toast colors depend on notch-toast's class names, so recheck them if the library is upgraded.
+
+## ADR-041: The whole ticket rolls
+
+- **Date:** 2026-11-10 **Status:** accepted (replaces the text-only `RollingPaper` from ADR-040)
+- **Context:** The owner asked for the whole ticket, not just the fact text, to roll while a fact generates, with a polished look.
+- **Options:** none; the owner's direction.
+- **Decision:** `RollingTicket` wraps the entire `<article>`, body and stub together. One `motion` value drives everything:
+  - a clip path that winds the ticket left to right in 0.85 s, then unwinds it right to left in 1.05 s on an ease-in-out curve;
+  - a cylinder that rides the edge and thickens from 35% to 100% as paper collects;
+  - an outer layer that turns Sunburst once the stub winds on;
+  - a curl shadow on the paper side of the roll;
+  - a gentle sway while the ticket is parked.
+
+  The "Printing a new fact" placeholder fades in behind the rolled ticket. The first load unrolls into view.
+- **Why:** The ticket is a paper object, so rolling it explains "a new one is being printed" better than a spinner.
+- **Consequences:**
+  - Only clip path, transform and opacity animate, so there's no layout thrash.
+  - Under reduced motion the ticket and the placeholder swap with no movement.
+- **Addendum (same day):**
+  - **Phones roll bottom to top.** Below Tailwind's `md` breakpoint the ticket is stacked, so it winds upward into a horizontal roll parked at the top. The core is Sunburst, because the stub at the bottom winds on first.
+  - **Direction detection:** `useIsDesktop()` (`useSyncExternalStore` on `matchMedia`) picks the axis. The roll element is keyed by axis so a stale `left` from the server render can't linger.
+  - **Tests:** the frontend setup stubs `window.matchMedia`, which jsdom lacks.
