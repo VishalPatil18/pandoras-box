@@ -1,12 +1,14 @@
 "use client";
 
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState, type ReactNode } from "react";
+import { NotchToaster } from "notch-toast";
+import { Suspense, useState, type ReactNode } from "react";
+import { FlashToast } from "@/components/flash-toast";
 import { isUnauthenticated } from "@/lib/api";
 import { goToLanding } from "@/lib/navigation";
 
 function redirectIfSignedOut(error: unknown): void {
-  if (isUnauthenticated(error)) goToLanding();
+  if (isUnauthenticated(error)) goToLanding("session-expired");
 }
 
 export function Providers({ children }: { children: ReactNode }) {
@@ -19,5 +21,14 @@ export function Providers({ children }: { children: ReactNode }) {
       }),
   );
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+      <NotchToaster position="top-center" mode="attached" animation="gooey" />
+      {/* useSearchParams needs a Suspense boundary of its own. */}
+      <Suspense fallback={null}>
+        <FlashToast />
+      </Suspense>
+    </QueryClientProvider>
+  );
 }

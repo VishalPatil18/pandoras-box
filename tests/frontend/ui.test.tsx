@@ -1,8 +1,7 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import { Avatar } from "@/components/ui/avatar";
 import { Field } from "@/components/ui/field";
-import { ToastProvider, useToast } from "@/components/ui/toast";
 
 describe("Field", () => {
   it("puts the label above the input and links help text", () => {
@@ -38,28 +37,5 @@ describe("Avatar", () => {
 
     expect(container.querySelector("img")).toBeNull();
     expect(screen.getByText("AO")).toBeInTheDocument();
-  });
-});
-
-describe("Toast", () => {
-  function Trigger() {
-    const toast = useToast();
-    return <button onClick={() => toast.show("Couldn't save.")}>save</button>;
-  }
-
-  it("announces a message and hides it after a few seconds", () => {
-    vi.useFakeTimers();
-    render(
-      <ToastProvider>
-        <Trigger />
-      </ToastProvider>,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "save" }));
-    expect(screen.getByRole("status")).toHaveTextContent("Couldn't save.");
-
-    act(() => vi.advanceTimersByTime(5_000));
-    expect(screen.getByRole("status")).toBeEmptyDOMElement();
-    vi.useRealTimers();
   });
 });

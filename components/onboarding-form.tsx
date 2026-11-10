@@ -6,6 +6,7 @@ import { Field } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { api, ApiError, isUnauthenticated } from "@/lib/api";
 import { goToLanding } from "@/lib/navigation";
+import { notify } from "@/lib/notify";
 import { normalizeMovie } from "@/lib/movie";
 
 export function OnboardingForm() {
@@ -22,12 +23,15 @@ export function OnboardingForm() {
     setSaving(true);
     try {
       await api.setMovie(title.value);
-      router.replace("/dashboard");
+      router.replace("/dashboard?toast=onboarded");
     } catch (failure) {
-      if (isUnauthenticated(failure)) return goToLanding();
-      setError(
-        failure instanceof ApiError ? failure.message : "Couldn't save your movie. Try again.",
-      );
+      if (isUnauthenticated(failure)) return goToLanding("session-expired");
+      const message =
+        failure instanceof ApiError ? failure.message : "Couldn't save your movie. Try again.";
+      // Field problems stay next to the field; anything else also gets a toast.
+      setError(message);
+      if (!(failure instanceof ApiError && failure.code === "VALIDATION_ERROR"))
+        notify.error(message);
       setSaving(false);
     }
   }

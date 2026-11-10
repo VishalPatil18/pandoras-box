@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
+import { notify } from "@/lib/notify";
 
 function GoogleMark() {
   return (
-    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 48 48">
+    <svg aria-hidden="true" viewBox="0 0 48 48" className="size-6 md:size-7">
       <path
         fill="#FFC107"
         d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"
@@ -27,32 +27,52 @@ function GoogleMark() {
   );
 }
 
-export function SignInButton() {
+// Shared by the header button and the footer link so both start the same Google flow.
+function useGoogleSignIn() {
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   async function signIn() {
     setPending(true);
-    setError(null);
     // Google redirects back to "/", which then routes to onboarding or the dashboard.
-    const result = await authClient.signIn.social({ provider: "google", callbackURL: "/" });
+    const result = await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/?toast=signed-in",
+    });
     if (result?.error) {
-      setError("Couldn't start Google sign-in. Try again.");
+      notify.error("Couldn't start Google sign-in. Try again.");
       setPending(false);
     }
   }
 
+  return { signIn, pending };
+}
+
+export function SignInButton() {
+  const { signIn, pending } = useGoogleSignIn();
+
   return (
-    <div className="grid justify-items-start gap-2 md:justify-items-end">
-      <Button onClick={signIn} disabled={pending}>
+    <button
+      type="button"
+      onClick={signIn}
+      disabled={pending}
+      className="flex cursor-pointer items-center gap-1.5 rounded-[14px] border-2 border-paper bg-carbon/50 py-1.5 pr-4 pl-1.5 text-paper transition-transform duration-200 ease-out-expo hover:-translate-y-0.5 active:not-disabled:scale-[0.97] disabled:cursor-wait disabled:opacity-80 md:pr-5"
+    >
+      <span className="grid size-9 place-items-center rounded-[9px] md:size-11">
         <GoogleMark />
-        {pending ? "Opening Google" : "Sign in with Google"}
-      </Button>
-      {error && (
-        <p role="alert" className="text-sm font-bold">
-          {error}
-        </p>
-      )}
-    </div>
+      </span>
+      <span className="text-xl leading-none font-bold tracking-[0.02em] md:text-xxl">
+        {pending ? "Opening…" : "Sign in"}
+      </span>
+    </button>
+  );
+}
+
+export function SignInLink({ className }: { className?: string }) {
+  const { signIn, pending } = useGoogleSignIn();
+
+  return (
+    <button type="button" onClick={signIn} disabled={pending} className={className}>
+      Sign in
+    </button>
   );
 }

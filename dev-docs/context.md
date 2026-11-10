@@ -119,3 +119,26 @@ What exists, how it works, and what is locked in. Entries are appended per sessi
 
 - ADR-034: Cult UI is used only for `rolling-number` and the adapted avatar.
 - Pinned: `@tanstack/react-query` 5.107.1, `motion` 14.11.1, `msw` 3.0.4, `jsdom` 31.0.0, `@testing-library/react` 16.3.3, `@testing-library/dom` 10.4.2, `@testing-library/user-event` 14.6.8 (14.6.9 was inside pnpm's one-day window), `@testing-library/jest-dom` 7.0.1.
+
+---
+
+## 2026-11-10: Owner design review (ADR-035)
+
+- **Landing (`components/landing/hero.tsx`):** a full-viewport rounded frame (`h-dvh overflow-hidden`) with `public/landing-bg.jpg` loaded through `next/image` (static import, blur placeholder). On top: the white wordmark over `Ribbon` with two stickers, the tagline, `SignInButton` (Gochi Hand label) at the top right, and a footer. Footer links: the `SignInLink` sign-in action, Docs (README), Changelog and Github on the GitHub repo, and "Vishal" linked to https://vishalpatil.tech/. `marquee.tsx` is deleted.
+- **Dashboard and onboarding:** a centered 1200px column (`max-w-[1200px] mx-auto` with responsive padding) inside full-width color bands, and a text wordmark instead of the box icon.
+- **`ProfilePill`:** owns logout now. Avatar, name and truncated email sit on the left; Log out sits on the right behind a hairline divider. On phones it shows only the avatar and the icon, which keeps `aria-label="Log out"`.
+- **Checked:** 76 tests, type check, lint and build pass. Screenshots of the landing page at 1440, 1280x640 and 600, and of the dashboard and onboarding at 1440 and 390.
+- **Later the same day (ADR-036):**
+  - **Landing:** full bleed, with no frame or rounded corners.
+  - **`Ribbon`:** a client component. A full-width Ember strip whose path `d` morphs with `motion` (7 second mirrored loop) unless the user prefers reduced motion.
+  - **Stickers:** they use `animate-float` from `globals.css`.
+  - **Sign in label:** General Sans bold. Gochi Hand is removed from the layout.
+
+---
+
+## 2026-11-10: Toasts and ticket polish (ADR-037)
+
+- **Toasts:** `lib/notify.ts` wraps notch-toast (5 second duration, the `FACT_TOAST` id for the generation cycle). `components/flash-toast.tsx` reads the `?toast=` keys `signed-in`, `signed-out`, `onboarded` and `session-expired`. `goToLanding(flash?)` passes a key through a full page load.
+- **Ticket:** while a fact is generating, the whole ticket animates. Its new details are an inner keyline, a "Title, Year" heading split from the fact text, a meta row pinned to the bottom, and a stub barcode.
+- **Tests:** 77 passing. The frontend setup stubs `notch-toast` (renderer and toast spies) and `next/navigation` globally.
+- **Verified live:** a dashboard visit with no stored fact made a real OpenAI call and showed the result with the "New fact ready." toast.

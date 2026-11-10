@@ -34,7 +34,9 @@ describe("OnboardingForm", () => {
 
     await submit("Heat");
 
-    await vi.waitFor(() => expect(router.replace).toHaveBeenCalledWith("/dashboard"));
+    await vi.waitFor(() =>
+      expect(router.replace).toHaveBeenCalledWith("/dashboard?toast=onboarded"),
+    );
   });
 
   it("stops an empty title before sending anything", async () => {

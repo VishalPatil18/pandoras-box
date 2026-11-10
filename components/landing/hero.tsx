@@ -1,57 +1,72 @@
-import { Icon } from "@/components/icons";
-import { Sticker } from "@/components/sticker";
-import { Marquee } from "@/components/landing/marquee";
-import { Ribbon } from "@/components/landing/ribbon";
-import { SignInButton } from "@/components/landing/sign-in-button";
+import Image from "next/image";
+import landingBackground from "@/public/landing-bg.jpg";
+import { HeroTitle } from "@/components/landing/hero-title";
+import { SignInButton, SignInLink } from "@/components/landing/sign-in-button";
 
+const REPO_URL = "https://github.com/VishalPatil18/pandoras-box";
+const FOOTER_LINK =
+  "rounded-sm underline-offset-4 hover:underline focus-visible:outline-paper cursor-pointer";
+
+// One screen: the painting fills it edge to edge, nothing scrolls, everything sits on top.
 export function Hero() {
   return (
-    <main>
-      <Marquee />
-      <section className="grid min-h-[calc(100dvh-38px)] grid-rows-[auto_1fr_auto] bg-sky px-[clamp(16px,4vw,48px)] pb-12">
-        <header className="py-5">
-          <span
-            aria-hidden="true"
-            className="grid size-11 place-items-center rounded-pill border border-carbon bg-paper"
-          >
-            <Icon name="box" />
-          </span>
-        </header>
+    <main className="relative isolate flex h-dvh flex-col overflow-hidden text-paper">
+      <Image
+        src={landingBackground}
+        alt=""
+        fill
+        priority
+        placeholder="blur"
+        sizes="100vw"
+        className="-z-20 object-cover object-[30%_bottom]"
+      />
 
-        <div className="relative isolate grid items-center">
-          <Ribbon />
-          <h1 className="font-display text-[clamp(64px,13vw,240px)] leading-[0.8] uppercase">
-            Pandoras
-            <br />
-            Box
-          </h1>
-          <Sticker
-            icon="clapperboard"
-            color="ember"
-            rotate={-12}
-            className="absolute top-[6%] right-[14%]"
-          />
-          <Sticker
-            icon="sparkles"
-            color="sun"
-            rotate={9}
-            className="absolute top-[46%] right-[4%]"
-          />
-          <Sticker
-            icon="film"
-            color="violet"
-            rotate={-6}
-            className="absolute bottom-[4%] left-[46%]"
-          />
-        </div>
+      <header className="flex justify-end p-4 md:p-7">
+        <SignInButton />
+      </header>
 
-        <div className="grid gap-6 pt-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-          <p className="max-w-[26ch] text-[clamp(20px,2.2vw,30px)] leading-[1.2]">
-            Name one movie you love. Get a piece of trivia about it you probably haven&apos;t heard.
-          </p>
-          <SignInButton />
+      <section className="relative isolate md:-mt-6">
+        <div className="px-5 md:px-12">
+          <HeroTitle />
         </div>
+        <p className="mt-5 max-w-[34ch] animate-in px-5 text-justify delay-700 duration-700 ease-out-expo fill-mode-both fade-in slide-in-from-bottom-2 text-[clamp(19px,2.3vw,32px)] leading-[1.25] font-medium [text-shadow:0_1px_12px_rgb(16_24_80/0.45)] md:mt-7 md:px-12">
+          Name one movie you love. Get a piece of trivia about it you probably haven&apos;t heard.
+        </p>
       </section>
+
+      <footer className="mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-3 bg-carbon/55 px-5 py-[31px] text-sm backdrop-blur-sm md:px-12 md:py-[37px] md:text-base">
+        <div className="grid gap-1.5">
+          <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-1 font-bold">
+            <SignInLink className={FOOTER_LINK} />
+            <a className={FOOTER_LINK} href={`${REPO_URL}#readme`} target="_blank" rel="noreferrer">
+              Docs
+            </a>
+            <a
+              className={FOOTER_LINK}
+              href={`${REPO_URL}/blob/main/CHANGELOG.md`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Changelog
+            </a>
+            <a className={FOOTER_LINK} href={REPO_URL} target="_blank" rel="noreferrer">
+              Github
+            </a>
+          </nav>
+          <p>&copy; 2026 Pandoras Box</p>
+        </div>
+        <p>
+          Built by{" "}
+          <a
+            className={`${FOOTER_LINK} font-bold underline`}
+            href="https://vishalpatil.tech/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Vishal
+          </a>
+        </p>
+      </footer>
     </main>
   );
 }

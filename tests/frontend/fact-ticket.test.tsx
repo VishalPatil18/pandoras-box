@@ -1,6 +1,7 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
+import { toast } from "notch-toast";
 import { describe, expect, it, vi } from "vitest";
 import { NewFactButton } from "@/components/dashboard/new-fact-button";
 import { server } from "../setup/frontend";
@@ -27,6 +28,11 @@ describe("fact ticket", () => {
 
     expect(await screen.findByText("Heat: a fact.")).toBeInTheDocument();
     expect(backend.factRequests).toBe(2);
+    expect(toast.loading).toHaveBeenCalledWith("Saved. Generating a fact about Heat…", {
+      id: "fact",
+      duration: 20_000,
+    });
+    expect(toast.success).toHaveBeenCalledWith("New fact ready.", { duration: 5_000 });
   });
 
   it("keeps the current fact after a capitalization-only edit", async () => {
@@ -52,6 +58,10 @@ describe("fact ticket", () => {
     expect(
       await screen.findByText("Couldn't get a fresh fact, so here's your last one."),
     ).toBeInTheDocument();
+    expect(toast.warning).toHaveBeenCalledWith(
+      "Couldn't get a fresh fact, so here's your last one.",
+      { duration: 5_000 },
+    );
   });
 
   it("offers Try again and hides New fact when no fact is available", async () => {
@@ -75,11 +85,15 @@ describe("fact ticket", () => {
       screen.getByText("Couldn't load a fact. OpenAI didn't answer in time."),
     ).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /New fact/ })).toBeNull();
+    expect(toast.error).toHaveBeenCalledWith(
+      "Couldn't load a fact. OpenAI didn't answer in time.",
+      { duration: 5_000 },
+    );
   });
 });
 
 describe("New fact button", () => {
-  it("counts down from the server's seconds and unlocks at zero", () => {
+  it("counts down from the server's seconds and unlocks at zero", async () => {
     vi.useFakeTimers();
     const onClick = vi.fn();
     render(
@@ -96,11 +110,12 @@ describe("New fact button", () => {
     expect(button).toBeDisabled();
 
     act(() => vi.advanceTimersByTime(3_000));
-
-    expect(button).toHaveTextContent("New fact");
-    expect(button).not.toHaveTextContent("in");
-    expect(button).toBeEnabled();
     vi.useRealTimers();
+
+    expect(button).toBeEnabled();
+    // The countdown label animates out, so wait for it to leave.
+    await waitFor(() => expect(button).not.toHaveTextContent("New fact in"));
+    expect(button).toHaveTextContent("New fact");
   });
 
   it("is disabled while a fact is loading", () => {

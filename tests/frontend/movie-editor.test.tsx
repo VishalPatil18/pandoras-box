@@ -1,5 +1,6 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { toast } from "notch-toast";
 import { describe, expect, it, vi } from "vitest";
 import { fakeBackend, renderDashboard } from "./dashboard-helpers";
 
@@ -37,8 +38,9 @@ describe("inline movie edit", () => {
     await editTo("Heat");
 
     await waitFor(() => expect(heading()).toHaveTextContent("Inception"));
-    expect(await screen.findByRole("status")).toHaveTextContent(
+    expect(toast.error).toHaveBeenCalledWith(
       'Couldn\'t save "Heat". Your favorite is still Inception.',
+      { duration: 5_000 },
     );
   });
 
