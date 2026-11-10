@@ -138,7 +138,7 @@ There is one user class: anyone with a Google account. There are no roles or adm
 
 ### 3.4 Fact generation, base (brief §4)
 
-**FR-FACT-1 Generate with OpenAI.** The server must generate facts with the OpenAI Responses API, using the model named in `OPENAI_MODEL` (default `gpt-5.4-mini`) with reasoning effort set to minimal (D15).
+**FR-FACT-1 Generate with OpenAI.** The server must generate facts with the OpenAI Responses API, using the model named in `OPENAI_MODEL` (default `gpt-5.4-mini`) with reasoning effort set to `none` (D15, ADR-033).
 
 **FR-FACT-2 Prompt rules.** The request must:
 - Put these rules in `instructions`: return exactly one fact about the film; at most two sentences; third person; no plot spoilers; only well-documented facts, with no rumors and no invented numbers; start with the film's title and the release year the model assumed, e.g. "Inception (2010):"; plain text without markdown.

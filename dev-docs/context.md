@@ -65,3 +65,32 @@ What exists, how it works, and what is locked in. Entries are appended per sessi
 - ADR-032: `cacheComponents` is off and `partialPrefetching` is removed. Pages read the session and redirect on the server before rendering.
 - better-auth 1.7.18 and the `auth` CLI 1.7.18 are pinned outside pnpm's one-day release-age window.
 - pnpm may run install scripts for `prisma` and `@prisma/engines` only (`pnpm-workspace.yaml`).
+
+---
+
+## 2026-11-10: Fact service and API (plan Tasks 7 to 11, Variant A)
+
+### What exists
+
+- **`GET /api/me`:** the session user's profile.
+- **`PUT /api/me/movie`:** validates the body with `SetMovieBodySchema` through `parseBody`, then saves the normalized title (`lib/users.ts`).
+- **`GET /api/fact`:** `getFact(user.id)` from `lib/facts.ts`, with `maxDuration = 15`.
+- **`lib/openai.ts`:** `generateFact({ movieTitle, previousFact? })`. It calls the Responses API with `gpt-5.4-mini` (or `OPENAI_MODEL`), `reasoning.effort: "none"`, a 150-token cap, an 8 second timeout and no retries. It throws `FactGenerationError` for any failure, incomplete response or blank text.
+- **`lib/facts.ts`:** the algorithm from architecture §7:
+  1. A fresh fact (under 60 seconds, measured with Postgres `now()`) is returned as `cache`.
+  2. Otherwise the request claims the user's lease with one conditional `UPDATE` (15 seconds, random token).
+  3. A request that doesn't get the lease polls every 500 ms for up to 9 seconds. It returns `shared` when the holder's fact appears, takes over if the lease frees up, and falls back at the deadline.
+  4. The holder re-checks, generates, stores, and releases the lease with a token check in `finally`.
+  5. If OpenAI fails, the last fact for that movie comes back as `fallback`, or `FACT_UNAVAILABLE` (503) when there is none.
+- **Tests:** 47 in total. The new ones cover routes, the OpenAI wrapper, the cache window, five-way concurrency (exactly one OpenAI call), lease expiry and token-checked release, a movie change during generation, fallback, and authorization.
+
+### How it works
+
+- Request bodies are validated once, in `parseBody`. Services receive values that are already valid.
+- The OpenAI client is created on first use, so `next build` and imports never need the API key.
+- Backend tests mock only `generateFact` (keeping the real `FactGenerationError`), and stub `next/headers` where a route has to run its real auth chain.
+
+### Locked in
+
+- ADR-033: reasoning effort is `none`.
+- `openai` 7.54.0 is pinned, because 7.55.0 was inside pnpm's one-day window.
