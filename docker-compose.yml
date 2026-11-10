@@ -1,0 +1,20 @@
+# Local Postgres for development and tests. Port 5433 avoids clashing with a system Postgres.
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: pandoras
+      POSTGRES_PASSWORD: pandoras
+      POSTGRES_DB: pandoras
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pandoras"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+volumes:
+  pgdata:

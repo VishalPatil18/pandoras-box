@@ -39,7 +39,7 @@ The exercise asks for one of two extensions. **Variant A (backend caching and co
 |---|---|
 | [dev-docs/epic.md](dev-docs/epic.md) | The requirements checklist and delivery plan |
 | [dev-docs/research.md](dev-docs/research.md) | How similar products and common stacks handle this, and where they fall short |
-| [dev-docs/design-decision.md](dev-docs/design-decision.md) | Every design decision with its options and reasoning |
+| [dev-docs/design-decisions.md](dev-docs/design-decisions.md) | Every design decision with its options and reasoning |
 | [dev-docs/architecture.md](dev-docs/architecture.md) | System design: data model, auth, the fact generation algorithm, client caching, failure modes |
 | [design/DESIGN.md](design/DESIGN.md) | Visual design system (colors, type, spacing, components) |
 | [design/mocks/index.html](design/mocks/index.html) | Clickable HTML mockups of every screen and state. Open it in a browser. |
@@ -51,4 +51,4 @@ The exercise asks for one of two extensions. **Variant A (backend caching and co
 - **Login is checked next to the data, not in middleware.** Every page and API route calls one `requireUser()` function. Recent Next.js middleware bypass CVEs are the reason.
 - **Rapid movie changes aren't rate limited.** A new movie always gets a fresh fact, so changing it many times in a minute costs one OpenAI call each. This is a known, documented limit.
 
-The full list, with alternatives considered, is in [dev-docs/design-decision.md](dev-docs/design-decision.md).
+The full list, with alternatives considered, is in [dev-docs/design-decisions.md](dev-docs/design-decisions.md).

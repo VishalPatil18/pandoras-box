@@ -8,7 +8,7 @@
 
 **Tech stack:** Next.js 16 (≥ 16.2.6), React 19, TypeScript strict, Tailwind v4 + shadcn + Cult UI, Better Auth, Prisma 7 + `@prisma/adapter-pg`, Supabase Postgres, OpenAI Node SDK (Responses API), TanStack Query v5, Zod, Vitest, MSW, React Testing Library, pnpm.
 
-**Spec:** [srs.md](srs.md). It is backed by [architecture.md](architecture.md), [design-decision.md](design-decision.md), [design/DESIGN.md](../design/DESIGN.md) and the mockups in [design/mocks/index.html](../design/mocks/index.html). Read the spec alongside this plan. Requirement IDs (FR-*, NFR-*, T-*) refer to it.
+**Spec:** [srs.md](srs.md). It is backed by [architecture.md](architecture.md), [design-decisions.md](design-decisions.md), [design/DESIGN.md](../design/DESIGN.md) and the mockups in [design/mocks/index.html](../design/mocks/index.html). Read the spec alongside this plan. Requirement IDs (FR-*, NFR-*, T-*) refer to it.
 
 ## Global constraints
 
@@ -81,51 +81,76 @@ tests/frontend/*.test.tsx      T-B1 to T-B5
 
 # Phase 1: Foundation
 
-### Task 1: Scaffold, tooling and design tokens
+### Task 1: Scaffold, tooling and design tokens ✅
 
 **Files:**
-- Create: `package.json`, `tsconfig.json`, `eslint.config.mjs`, `.prettierrc`, `docker-compose.yml`, `.env.example`, `vitest.config.ts`, `app/layout.tsx`, `app/globals.css`, `app/fonts/*`, `components.json`
-- Test: `tests/smoke.test.ts`
+- Created: `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `tsconfig.json`, `next.config.ts`, `eslint.config.mjs`, `.prettierrc`, `.prettierignore`, `components.json`, `components/ui/button.tsx` (shadcn default, restyled in Task 14), `lib/utils.ts`, `app/layout.tsx`, `app/page.tsx` (placeholder), `app/globals.css`, `app/fonts/*`, `docker-compose.yml`, `.env.example`, `vitest.config.ts`, `AGENTS.md`
 
 **Interfaces:**
 - Produces:
-  - pnpm scripts `dev`, `build`, `typecheck` (`tsc --noEmit`), `lint`, `test` (`vitest run`), `test:backend`, `test:frontend`, `db:up` (`docker compose up -d db`), `db:migrate` (`prisma migrate dev`).
-  - CSS variables and Tailwind theme names: `carbon paper sky concrete mist blue mint lavender ember sun violet`, `--radius-card 20px`, `--radius-card-xl 40px`, `--radius-pill 1600px`, `font-display`, `font-ui`.
+  - pnpm scripts `dev`, `build`, `start`, `typecheck` (`next typegen && tsc --noEmit`), `lint`, `format`, `test` (`vitest run`), `test:backend`, `test:frontend`, `db:up` (`docker compose up -d db`). Task 3 adds `db:migrate`.
+  - Tailwind theme names: colors `carbon paper sky concrete mist blue mint lavender ember sun violet ink-soft`, radii `rounded-card` (20px), `rounded-card-xl` (40px), `rounded-pill`, fonts `font-display` (Bowlby One) and `font-ui` (General Sans). shadcn's semantic variables (`primary`, `border`, `ring`, `accent`, `destructive` and so on) point at these tokens.
+  - Vitest projects `backend` (node, `tests/backend/**/*.test.ts`, files run one at a time) and `frontend` (jsdom, `tests/frontend/**/*.test.{ts,tsx}`), with `passWithNoTests` and native `resolve.tsconfigPaths`.
 
-- [ ] **Step 1:** Scaffold the project.
-  - Run `pnpm create next-app@latest . --ts --app --tailwind --eslint --src-dir=false --import-alias "@/*" --use-pnpm`.
-  - Confirm `next` in package.json is `>=16.2.6`.
-  - Add `"strict": true` in tsconfig if it isn't already set.
-- [ ] **Step 2:** Install the dependencies with `--save-exact`. First check each version against its current docs or changelog, and get the owner's OK on the list.
-  - `pnpm add better-auth @prisma/client @prisma/adapter-pg pg openai @tanstack/react-query zod server-only dotenv`
-  - `pnpm add -D prisma vitest @vitejs/plugin-react vite-tsconfig-paths jsdom @testing-library/react @testing-library/user-event @testing-library/jest-dom msw @types/pg prettier`
-- [ ] **Step 3:** Run `pnpm dlx shadcn@latest init`, choosing Tailwind v4 and the neutral base. Register the Cult UI namespace following https://www.cult-ui.com/docs installation.
-- [ ] **Step 4:** Write the theme and fonts.
-  - In `app/globals.css`, write the `@theme` block from the DESIGN.md Quick Start, renamed to the short names above. Set `::selection { background: var(--color-lavender) }` and `caret-color: var(--color-carbon)`, plus a default focus ring of `2px solid carbon` with a `3px` offset.
-  - Fonts:
-    - Bowlby One through `next/font/google` as `--font-display`.
-    - General Sans weights 500 and 700 through `next/font/local` as `--font-ui`. Download the woff2 files from Fontshare into `app/fonts/`.
-- [ ] **Step 5:** Set up local Postgres and the test config.
-  - `docker-compose.yml`: service `db`, image `postgres:17`, port `5433:5432`, user, password and db all `pandoras`.
-  - `.env.example`: lists `DATABASE_URL`, `DIRECT_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `OPENAI_API_KEY`, `OPENAI_MODEL=gpt-5.4-mini`, with local values pointing at port 5433.
-  - `vitest.config.ts`: two projects.
-    - `backend`: node environment, `tests/backend/**`, `fileParallelism: false`, `globalSetup: tests/setup/global-db.ts`.
-    - `frontend`: jsdom, `tests/frontend/**`, `setupFiles: tests/setup/frontend.ts`.
-- [ ] **Step 6:** Write `tests/smoke.test.ts` containing `expect(1 + 1).toBe(2)`. Run `pnpm typecheck && pnpm lint && pnpm vitest run tests/smoke.test.ts`. Expected: all pass.
-- [ ] **Step 7:** Checkpoint commit message: `chore: scaffold next app with tooling, design tokens and test setup`
+**How it was built, where it differs from the first draft:**
+- `create-next-app@16.4.6` ran in a scratch folder and its files were copied in, because it refuses a folder that already holds `dev-docs/` and `design/`.
+- The Next 16.4 template wires Tailwind through `@tailwindcss/turbopack`, so there's no `postcss.config.mjs`. It also turns on `cacheComponents` and `partialPrefetching` in `next.config.ts`.
+- `shadcn init -d` chose the `base-nova` style on `@base-ui/react`, and its `cn` package replaces `clsx` and `tailwind-merge`.
+- There is no smoke test. `passWithNoTests` keeps CI green until Task 3 adds real tests.
+- Dropped packages: `dotenv` (use Node's `process.loadEnvFile`), `vite-tsconfig-paths` (Vite 8 does it), `@vitejs/plugin-react` (Vite 8 compiles JSX; add only if component tests need it, with the owner's OK).
 
-### Task 2: CI workflow
+**Pinned versions, checked 2026-11-10.** Installed now:
+
+| Package | Version |
+|---|---|
+| next, eslint-config-next | 16.4.6 |
+| react, react-dom | 19.3.1 |
+| typescript | 6.0.3 (typescript-eslint supports below 6.1, so not 7.x) |
+| eslint | 9.39.5 (eslint-plugin-react supports up to 9) |
+| tailwindcss, @tailwindcss/turbopack | 4.3.5 |
+| prettier | 3.9.10 |
+| vitest | 5.1.0 |
+| vite | 8.3.7 (a peer of Vitest 5) |
+| @types/node | 24.19.2 |
+| @types/react, @types/react-dom | 19.3.0 |
+| @base-ui/react | 1.9.0 |
+| class-variance-authority | 0.7.1 |
+| cn | 0.5.2 |
+| lucide-react | 1.70.0 |
+| shadcn | 4.23.0 |
+| tw-animate-css | 1.4.0 |
+
+Install in the task that first uses them, re-checking that each version is still current:
+
+| Package | Version | Task |
+|---|---|---|
+| prisma, @prisma/client, @prisma/adapter-pg | 7.10.1 (npm `latest` is an 8.0 RC, so pin 7) | 3 |
+| pg, @types/pg | 8.23.1 | 3 |
+| better-auth | 1.7.19 | 5 |
+| server-only | 0.0.1 | 3 |
+| zod | 4.6.7 | 4 |
+| openai | 7.55.0 | 8 |
+| @tanstack/react-query | 5.107.1 | 13 |
+| msw | 3.0.4 | 12 |
+| jsdom | 31.0.0 | 12 |
+| @testing-library/react | 16.3.3 | 12 |
+| @testing-library/user-event | 14.6.9 | 12 |
+| @testing-library/jest-dom | 7.0.1 | 12 |
+
+- [x] **Verified:** `pnpm exec prettier --check .`, `pnpm typecheck`, `pnpm lint`, `pnpm test` and `pnpm build` all pass, and a screenshot of the production build shows the fonts and tokens rendering. `docker compose config` validates. Running the database container was not checked, because the Docker daemon (Colima) wasn't running.
+- [x] **Checkpoint:** `chore: scaffold next app with tooling and tokens`
+
+### Task 2: CI workflow ✅
 
 **Files:**
-- Create: `.github/workflows/ci.yml`
+- Created: `.github/workflows/ci.yml`
 
-- [ ] **Step 1:** Write the workflow.
-  - Triggers: push and pull_request.
-  - Job on `ubuntu-latest` with a `postgres:17` service (port 5432, health check `pg_isready`).
-  - Steps: checkout, `pnpm/action-setup`, `setup-node` (Node 22, pnpm cache), `pnpm install --frozen-lockfile`, `pnpm prisma generate`, `pnpm typecheck`, `pnpm lint`, `pnpm test`.
-  - Env: `DATABASE_URL` and `DIRECT_URL` pointing at the service, plus dummy values for the other variables.
-- [ ] **Step 2:** Validate with `pnpm dlx action-validator .github/workflows/ci.yml`, or by pushing a branch. Expected: valid, and the job is green once later tasks add tests.
-- [ ] **Step 3:** Checkpoint: `ci: run typecheck, lint and tests with postgres service`
+- Triggers on push and pull_request. Runs on `ubuntu-latest` with a `postgres:17` service.
+- Steps: `actions/checkout@v7.0.1`, `pnpm/action-setup@v6.1.1`, `actions/setup-node@v7.1.0` (Node 24 LTS, pnpm cache), then `pnpm install --frozen-lockfile`, `typecheck`, `lint`, `test` and `build`.
+- Env holds the database URLs for the service plus placeholder values for every other variable.
+- Task 3 adds `pnpm prisma generate` and `prisma migrate deploy`, which fail until a schema exists.
+- [ ] **Verify on first push:** the GitHub Actions run is green.
+- [x] **Checkpoint:** `ci: run typecheck, lint and tests on push`
 
 ---
 

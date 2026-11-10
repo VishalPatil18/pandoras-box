@@ -8,7 +8,7 @@ Source labels:
 - `[3P]` means only a third-party source says it, so check it before relying on it.
 - `[INF]` is our own inference.
 
-Nothing here is a decision. Anything marked "candidate" is an option to weigh, and the owner records the final call in [design-decision.md](design-decision.md).
+Nothing here is a decision. Anything marked "candidate" is an option to weigh, and the owner records the final call in [design-decisions.md](design-decisions.md).
 
 ---
 

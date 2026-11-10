@@ -323,3 +323,18 @@ The holder releases the lease only if the token still matches. There is one leas
 - **Missing or broken photo:** show the user's initials in a circle.
 - **Profile refresh:** name and photo are refreshed from Google on each login.
 - **Logout:** deletes the session row and returns to the landing page. Other open tabs are logged out on their next request.
+
+---
+
+## Decisions made after the initial set
+
+New entries follow the ADR format in `CLAUDE.md`.
+
+## ADR-031: OpenAI is an allowed paid service
+
+- **Date:** 2026-11-10 **Status:** accepted
+- **Context:** `CLAUDE.md` asks for free, open source or local services only. The exercise brief requires the OpenAI API, which is paid.
+- **Options:** A / treat OpenAI as a required exception. B / swap in a free or local model and break the brief's required stack.
+- **Decision:** A. OpenAI is the one paid service. Hosting and the database stay on free tiers (Vercel, Supabase).
+- **Why:** The brief requires OpenAI, and the owner confirmed it is a required exception.
+- **Consequences:** Every fact costs money. The 60-second cache, the lease (one call at a time per user), the `gpt-5.4-mini` default and the 150-token output cap keep that cost small. Rapid movie changes are still unbounded (D18).

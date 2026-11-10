@@ -1,0 +1,8 @@
+pnpm-lock.yaml
+.next/
+.claude/
+.impeccable/
+# Hand-written docs and the design system keep their own formatting.
+design/
+dev-docs/
+*.md
