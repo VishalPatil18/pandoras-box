@@ -43,7 +43,7 @@ docker-compose.yml             postgres:17 on host port 5433 for local dev and t
 vitest.config.ts               two projects: "backend" (node) and "frontend" (jsdom)
 .github/workflows/ci.yml       typecheck, lint, test with a Postgres service
 prisma/schema.prisma           Better Auth models + app fields + Fact
-prisma.config.ts               datasource from DIRECT_URL, loads dotenv
+prisma7.config.ts               datasource from DIRECT_URL, loads dotenv
 app/layout.tsx                 fonts, globals, <Providers>
 app/globals.css                Tailwind v4 @theme with DESIGN.md tokens
 app/fonts/                     GeneralSans-Medium.woff2, GeneralSans-Bold.woff2
@@ -156,10 +156,12 @@ Install in the task that first uses them, re-checking that each version is still
 
 # Phase 2: Data, auth and validation
 
-### Task 3: Schema, migration and database client
+### Task 3: Schema, migration and database client ✅
+
+> **As built:** Prisma 7.10.1 reads `prisma7.config.ts`, which loads `.env` with `process.loadEnvFile()`. The Better Auth CLI is `pnpm dlx auth@1.7.18 generate`, and it can't load files that import `server-only`, so remove that line for the run and restore it. Backend tests use a separate `pandoras_test` database that `tests/setup/global-db.ts` creates and migrates. `server-only` is aliased to `tests/setup/server-only.ts` in Vitest. `postinstall` runs `prisma generate`. better-auth is pinned to 1.7.18, because 1.7.19 and 1.7.20 were inside pnpm's one-day release-age window.
 
 **Files:**
-- Create: `prisma/schema.prisma`, `prisma.config.ts`, `lib/db.ts`, `tests/setup/global-db.ts`, `tests/setup/db.ts`
+- Create: `prisma/schema.prisma`, `prisma7.config.ts`, `lib/db.ts`, `tests/setup/global-db.ts`, `tests/setup/db.ts`
 - Test: `tests/backend/db.test.ts`
 
 **Interfaces:**
@@ -169,7 +171,7 @@ Install in the task that first uses them, re-checking that each version is still
 
 - [ ] **Step 1:** Generate the Better Auth models with `pnpm dlx @better-auth/cli generate --config lib/auth.ts`. (A minimal `lib/auth.ts` with the Prisma adapter is enough here; Task 5 completes it.) Then add the app fields and the `Fact` model exactly as in srs §4.1.
 - [ ] **Step 2:** Set up the Prisma client.
-  - `prisma.config.ts`: `import "dotenv/config"`, with the datasource URL from `DIRECT_URL`.
+  - `prisma7.config.ts`: `import "dotenv/config"`, with the datasource URL from `DIRECT_URL`.
   - `lib/db.ts`: `server-only`, one `pg.Pool({ connectionString: DATABASE_URL, connectionTimeoutMillis: 5000, idleTimeoutMillis: 5000 })`, then `new PrismaClient({ adapter: new PrismaPg(pool) })`, kept on `globalThis` in development.
 - [ ] **Step 3:** Run `pnpm db:up && pnpm prisma migrate dev --name init`. Expected: the migration is created and the tables exist.
 - [ ] **Step 4:** Write the test helpers.
@@ -181,7 +183,9 @@ Install in the task that first uses them, re-checking that each version is still
 - [ ] **Step 6:** Run `pnpm test:backend tests/backend/db.test.ts`. Expected: PASS.
 - [ ] **Step 7:** Checkpoint: `feat(db): add prisma schema with fact history and lease columns`
 
-### Task 4: Movie title rule
+### Task 4: Movie title rule ✅
+
+> **As built:** `MovieTitleSchema` (Zod) holds the rule and `normalizeMovie()` wraps it. Whitespace collapses **before** the control-character check, as srs §5.1 orders it, so a pasted tab or newline becomes a space. Step 3 below had the order reversed and is superseded.
 
 **Files:**
 - Create: `lib/movie.ts`
@@ -211,7 +215,9 @@ Install in the task that first uses them, re-checking that each version is still
 - [ ] **Step 4:** Run the test again. Expected: PASS.
 - [ ] **Step 5:** Checkpoint: `feat: add shared movie title validation`
 
-### Task 5: Auth and the data access layer
+### Task 5: Auth and the data access layer ✅
+
+> **As built:** `profileToUser` returns `image: undefined` (not `null`) when there's no photo, because Better Auth's mapper type requires it. `lib/errors.ts` also exports `ERROR_STATUS` and default user-facing messages. `getCurrentUser` is wrapped in React `cache` and maps an empty stored name to `null`.
 
 **Files:**
 - Create: `lib/auth.ts`, `lib/auth-client.ts`, `lib/dal.ts`, `lib/errors.ts`, `app/api/auth/[...all]/route.ts`
@@ -241,7 +247,7 @@ Install in the task that first uses them, re-checking that each version is still
 - [ ] **Step 4:** Run the tests. Expected: PASS.
 - [ ] **Step 5:** Checkpoint: `feat(auth): add better auth with google, database sessions and requireUser`
 
-### Task 6: Contracts and the route wrapper
+### Task 6: Contracts and the route wrapper ✅
 
 **Files:**
 - Create: `lib/contracts.ts`, `lib/http.ts`
