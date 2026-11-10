@@ -142,3 +142,23 @@ What exists, how it works, and what is locked in. Entries are appended per sessi
 - **Ticket:** while a fact is generating, the whole ticket animates. Its new details are an inner keyline, a "Title, Year" heading split from the fact text, a meta row pinned to the bottom, and a stub barcode.
 - **Tests:** 77 passing. The frontend setup stubs `notch-toast` (renderer and toast spies) and `next/navigation` globally.
 - **Verified live:** a dashboard visit with no stored fact made a real OpenAI call and showed the result with the "New fact ready." toast.
+
+---
+
+## 2026-11-10: Security audit and fixes (plan Task 18, before deploy)
+
+### What exists
+
+- **`dev-docs/security-audit.md`:** the full report. Seven findings, the fixes, what was checked and found safe, and the deploy-time checks.
+- **Generation cap (`lib/facts.ts`):** `GENERATION_LIMIT` 20 per `GENERATION_WINDOW_SECONDS` 600, counted across all movies under the lease. Over the cap it serves `fallback`, or `RATE_LIMITED` (429) when the movie has no fact yet.
+- **Migration `20261110200000_enable_rls`:** RLS on `user`, `session`, `account`, `verification`, `fact` and `_prisma_migrations`, with no policies.
+- **`next.config.ts`:** `frame-ancestors 'none'`, `X-Frame-Options: DENY`, `nosniff` and `strict-origin-when-cross-origin` on every route.
+- **`docker-compose.yml`:** Postgres binds to `127.0.0.1:5433` only.
+- **CI:** `permissions: contents: read`.
+- **Tests:** 81 passing. New: T-A9 (the cap) and T-A10 (RLS on every table).
+
+### Locked in
+
+- ADR-042 replaces D18: the per-user cap is in, and the OpenAI budget limit is the backstop.
+- ADR-043: every new table gets RLS in its migration.
+- The order changed: the security fixes land before the first deploy, so production starts with RLS on.

@@ -78,3 +78,14 @@ Lessons from each feature cycle. Append only; past entries are never edited.
 - **`cn` (tailwind-merge) treats a `text-*` size as conflicting with `leading-*`.** Put the size class first or the line height silently disappears.
 - **To make two elements share a width, put them in a `w-fit` wrapper and stretch the follower (`items-stretch`, `w-full`).** Vertical text that wraps into columns then drives the width.
 - **Draw a decorative graphic in the direction it's shown rather than rotating it.** A rotated element keeps its unrotated layout box.
+
+---
+
+## 2026-11-10: Security audit
+
+- **A per-key cache is not a rate limit.** The 60 second window keyed on (user, movie) read like "one call a minute" until changing the key skipped it. Cap on the dimension the cost actually follows, the user.
+- **Count under the lock you already hold.** Checking the cap inside the lease means parallel requests can't each see 19 and all generate.
+- **Prisma on Supabase lands in `public` with RLS off,** and the Data API serves `public` to `anon`. Turn RLS on in a migration so the protection travels with the schema, not with a dashboard toggle.
+- **Table owners bypass RLS unless it's forced,** so turning it on with no policies locks out the API roles without touching the app or the tests.
+- **Docker's `ports: "5433:5432"` binds every interface.** Prefix `127.0.0.1:` for anything with credentials in the repo.
+- **Read the library's source for defaults that matter.** Better Auth's `/update-user` only writes declared fields, and it throws on a default secret in production. Both were settled in minutes by reading `node_modules`.

@@ -6,8 +6,9 @@ services:
       POSTGRES_USER: pandoras
       POSTGRES_PASSWORD: pandoras
       POSTGRES_DB: pandoras
+    # Loopback only: the credentials are public, so other machines on the network stay out.
     ports:
-      - "5433:5432"
+      - "127.0.0.1:5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:

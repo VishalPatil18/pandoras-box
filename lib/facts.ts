@@ -12,6 +12,9 @@ export const LEASE_SECONDS = 15;
 export const POLL_INTERVAL_MS = 500;
 // Covers the holder's OpenAI call plus the insert before a waiter gives up.
 export const POLL_TIMEOUT_MS = 9_000;
+// Twice what one movie refreshed every minute needs, so only movie switching loops hit it.
+export const GENERATION_LIMIT = 20;
+export const GENERATION_WINDOW_SECONDS = 600;
 
 type StoredFact = { movieTitle: string; text: string; createdAt: Date };
 type FreshFact = StoredFact & { secondsUntilRefresh: number };
@@ -76,6 +79,16 @@ export async function releaseLease(userId: string, token: string): Promise<void>
     WHERE "id" = ${userId} AND "factLeaseToken" = ${token}`;
 }
 
+// Counts every movie, because switching titles is how the 60 second window gets skipped.
+async function isOverGenerationLimit(userId: string): Promise<boolean> {
+  const [{ count }] = await prisma.$queryRaw<{ count: number }[]>`
+    SELECT count(*)::int AS "count"
+    FROM "fact"
+    WHERE "userId" = ${userId}
+      AND "createdAt" > now() - make_interval(secs => ${GENERATION_WINDOW_SECONDS})`;
+  return count >= GENERATION_LIMIT;
+}
+
 async function fallbackTo(userId: string, key: string): Promise<FactResponse> {
   const latest = await findLatestFact(userId, key);
   if (!latest) throw new AppError("FACT_UNAVAILABLE");
@@ -88,6 +101,10 @@ async function generateAndStore(
   key: string,
 ): Promise<FactResponse> {
   const previous = await findLatestFact(userId, key);
+  if (await isOverGenerationLimit(userId)) {
+    if (!previous) throw new AppError("RATE_LIMITED");
+    return toResponse(previous, "fallback", 0);
+  }
   let text: string;
   try {
     text = await generateFact({ movieTitle, previousFact: previous?.text });

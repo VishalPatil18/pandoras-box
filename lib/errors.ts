@@ -2,6 +2,7 @@ export const ERROR_STATUS = {
   UNAUTHENTICATED: 401,
   VALIDATION_ERROR: 400,
   ONBOARDING_REQUIRED: 409,
+  RATE_LIMITED: 429,
   FACT_UNAVAILABLE: 503,
   INTERNAL: 500,
 } as const;
@@ -14,6 +15,7 @@ const DEFAULT_MESSAGES: Record<ErrorCode, string> = {
   UNAUTHENTICATED: "Sign in to continue.",
   VALIDATION_ERROR: "Check the highlighted field and try again.",
   ONBOARDING_REQUIRED: "Choose your favorite movie first.",
+  RATE_LIMITED: "You've asked for a lot of facts. Try again in a few minutes.",
   FACT_UNAVAILABLE: "Couldn't load a fact. OpenAI didn't answer in time.",
   INTERNAL: "Something went wrong. Try again in a moment.",
 };
