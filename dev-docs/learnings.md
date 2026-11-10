@@ -89,3 +89,23 @@ Lessons from each feature cycle. Append only; past entries are never edited.
 - **Table owners bypass RLS unless it's forced,** so turning it on with no policies locks out the API roles without touching the app or the tests.
 - **Docker's `ports: "5433:5432"` binds every interface.** Prefix `127.0.0.1:` for anything with credentials in the repo.
 - **Read the library's source for defaults that matter.** Better Auth's `/update-user` only writes declared fields, and it throws on a default secret in production. Both were settled in minutes by reading `node_modules`.
+
+---
+
+## 2026-11-10: Documentation and logo
+
+- **Sample brand colors from the image itself.** sharp, already installed for `next/image`, can read the hero's raw pixels. Averaging a 9 by 9 patch beats eyeballing a JPEG.
+- **Check a logo at 16px before falling for it at 256.** Gradients and fine details turn to mud in a favicon. A second, simpler drawing is cheaper than compromising the master.
+- **`rsvg-convert` plus sharp's `composite` makes contact sheets,** so a non-designer can compare logo concepts at every size in one image.
+- **Next's `app/icon.svg` and `app/apple-icon.png` need no code.** The framework writes the `<link>` tags.
+- **A README written during planning goes stale fast.** Its status note still said no code existed after four phases had shipped.
+
+---
+
+## 2026-11-10: Docs page and diagrams
+
+- **Vitest's `toMatchFileSnapshot` is a free export pipeline.** Render a component to a string, compare it with a file, and `-u` rewrites the file. One test is both the exporter and the drift check.
+- **Inline SVGs on one page share one id space.** Prefix every marker id with the diagram's id, or the second diagram's arrows point at the first one's markers.
+- **A presentation attribute on the root `<svg>` beats inherited CSS.** Setting `font-family` only in the export, not the component, lets the inline copy keep the page font.
+- **Headless Chrome's `--window-size` has a minimum width,** so a 390px screenshot looks clipped. Emulate the viewport over the DevTools protocol and measure `scrollWidth` before blaming the CSS.
+- **Check every "why" against the record.** A first draft of the decision log stated reasons nobody had given. Reasons in docs have to come from the ADRs, not from what sounds plausible.

@@ -162,3 +162,41 @@ What exists, how it works, and what is locked in. Entries are appended per sessi
 - ADR-042 replaces D18: the per-user cap is in, and the OpenAI budget limit is the backstop.
 - ADR-043: every new table gets RLS in its migration.
 - The order changed: the security fixes land before the first deploy, so production starts with RLS on.
+
+---
+
+## 2026-11-10: Documentation, video script and logo (plan Tasks 19 and 20)
+
+### What exists
+
+- **`README.md`:** rewritten for the finished app. Setup, env vars, local and production migrations, scripts, a condensed architecture with the system and lease diagrams, the variant choice, tradeoffs, "With 2 more hours", AI usage, and credits.
+- **`dev-docs/video-script.md`:** a 4 minute 30 second script in six timed segments, with a pre-recording checklist.
+- **Logo (ADR-044):** `design/logo/pandoras-box.svg` is the master: an isometric open carton with a sunset movie window. `app/icon.svg` is the favicon variant. `app/apple-icon.png` is 180px on Sky Wash. Next's file conventions add the `<link>` tags, so `layout.tsx` is unchanged.
+- **`design/DESIGN.md`:** the Logo Mark section describes this logo, its sampled colors, its files and its usage rules.
+
+### Locked in
+
+- Logo colors are sampled from the hero image: `#173A8C`, `#2346A0`, `#355BC2`, with `#0E2463` for the inside of the box.
+- Below 48px, use the favicon variant.
+- Still owed by the owner: record the video, and add its link and the live URL to the README (there's a comment marking the spot).
+
+---
+
+## 2026-11-10: Docs page and diagrams (ADR-045)
+
+### What exists
+
+- **`/docs`** (`app/docs/page.tsx`): a public page. Logo and title, the walkthrough video (`WALKTHROUGH_VIDEO_ID`, `null` for now, which shows a placeholder), then a long article with a sticky "On this page" pane from `lg` up and a collapsible list below it. Text is justified with hyphenation in the 1200px column.
+- **`components/docs/content.tsx`:** 15 sections. Overview, why, architecture, stack, data model, sign-in, getting a fact, failures, the browser side, every decision, security, testing, design, known limits, next steps. Exports `SECTIONS`, `DocsContent` and `Walkthrough`.
+- **`components/docs/decisions.tsx`:** all 45 decisions (D1 to D30, ADR-031 to 045) as typed data, rendered with what was considered, what was chosen and why.
+- **`components/docs/diagrams.tsx`:** nine inline SVG diagrams: system architecture, request path, data model, sign-in, the getFact flow, two tabs, lease alternatives, cache layers and the movie edit.
+- **`dev-docs/diagrams/*.svg`:** standalone exports, embedded by `README.md` and `dev-docs/architecture.md`. Both docs no longer use Mermaid.
+- **`components/docs/on-this-page.tsx`:** a client component that marks the section whose top has passed 120px.
+- **Footer:** the landing page's Docs link opens `/docs`. `REPO_URL` is exported from `hero.tsx`.
+- **Tests:** 93. New: the 9 diagram export checks, and 3 docs page tests.
+
+### Locked in
+
+- Change a diagram, then run `pnpm docs:diagrams`. A plain `pnpm test` fails while a file is stale.
+- A new ADR goes in both `design-decisions.md` and `components/docs/decisions.tsx`.
+- The owner pastes the YouTube video ID into `WALKTHROUGH_VIDEO_ID` once the video is uploaded.

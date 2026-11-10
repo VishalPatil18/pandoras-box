@@ -244,6 +244,18 @@ The cap leaves normal use alone: one movie refreshed every minute makes 10 facts
 
 **FR-CLIENT-6 States.** Every async surface must have loading, error and success states, as listed in arch §8 "UI states".
 
+### 3.10 Docs page
+
+**FR-DOCS-1 Public page.** `/docs` must render for anyone, signed in or not. It never reads the session. The landing footer's "Docs" link must open it.
+
+**FR-DOCS-2 Header and video.** The page must open with the logo and the title, then the walkthrough video, at most 720px wide. The video is a privacy-enhanced YouTube embed (`youtube-nocookie.com`) whose ID is a constant in `app/docs/page.tsx`. While the constant is `null`, a "Walkthrough video coming soon" card takes its place.
+
+**FR-DOCS-3 Content.** The page must explain the app in depth: the architecture, data model, sign-in, the fact algorithm, failure handling, the browser side, security, testing, the design system, known limits and next steps. It must list every design decision (D1 to D30 and every ADR) with what was decided and why.
+
+**FR-DOCS-4 Layout.** Content sits in the same centered 1200px column as the other pages. Body paragraphs are justified with automatic hyphenation. From the `lg` breakpoint up, a sticky "On this page" pane on the right lists every section and marks the one being read. Below `lg`, the same list sits above the article in a collapsible block.
+
+**FR-DOCS-5 Diagrams.** Diagrams are inline SVG components in `components/docs/diagrams.tsx`, each in a `<figure>` with a caption and an `aria-label` stating its claim. The same components are exported as standalone SVG files to `dev-docs/diagrams/`, which the README and architecture.md embed. A test fails when a file no longer matches its component, and `pnpm docs:diagrams` rewrites the files.
+
 ---
 
 ## 4. Data requirements
@@ -406,6 +418,7 @@ Errors: `401 UNAUTHENTICATED`, `409 ONBOARDING_REQUIRED`, `429 RATE_LIMITED`, `5
 - **NFR-UI-1** The UI must follow [design/DESIGN.md](../design/DESIGN.md) tokens and the approved mockups. The exceptions are recorded in D28.
 - **NFR-UI-2** Icons come from [design/icons/](../design/icons/), and fonts are self-hosted Bowlby One and General Sans (D29).
 - **NFR-UI-3** Layouts must work from 360px wide upward without horizontal scrolling. The ticket stacks its stub below the body under 768px.
+- **NFR-UI-4** The logo is an open carton with a movie window on its front face, drawn in the hero sky's blues (ADR-044). The master is `design/logo/pandoras-box.svg`. The browser tab uses a simplified favicon (`app/icon.svg`) that stays readable at 16px, and iOS uses `app/apple-icon.png` (180px). The README shows the master logo.
 
 ### 7.6 Maintainability
 
@@ -486,6 +499,7 @@ The repo also includes:
 | Users can't access others' data | FR-API-3, NFR-SEC-4, T-A7 |
 | No secrets on the client | NFR-SEC-1 |
 | Security audit fixes | FR-LIMIT-1, NFR-SEC-7, NFR-SEC-8, DEP-5, T-A9, T-A10 |
+| Docs page and diagrams | FR-DOCS-1 to FR-DOCS-5 |
 | Missing Google photo or name | FR-DASH-2, FR-DASH-3 |
 | Deliverables | DOC-1 to DOC-9 |
 

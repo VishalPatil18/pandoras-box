@@ -561,9 +561,9 @@ The owner does the account steps, and the agent prepares the commands and checks
 
 # Phase 6: Documentation and demo
 
-### Task 19: README and AI usage note
+### Task 19: README and AI usage note ✅
 
-- [ ] **Step 1:** Expand `README.md` to cover DOC-1 to DOC-8:
+- [x] **Step 1:** Expand `README.md` to cover DOC-1 to DOC-8:
   - setup (`pnpm i`, `pnpm db:up`, copy `.env.example`, `pnpm db:migrate`, `pnpm dev`)
   - the environment variable table
   - migration steps for local and production
@@ -572,12 +572,12 @@ The owner does the account steps, and the agent prepares the commands and checks
   - the tradeoffs, including D18
   - "With 2 more hours": a per-user generation rate limit, a TMDB lookup for ambiguous titles, Playwright end-to-end tests with a seeded session, and fact streaming
   - an "AI usage" bullet section
-- [ ] **Step 2:** Run the project's humanizer rules over the README and check for dashes: `grep -c "[–—]" README.md` should print 0.
-- [ ] **Step 3:** Checkpoint: `docs: complete readme with setup, architecture and tradeoffs`
+- [x] **Step 2:** Run the project's humanizer rules over the README and check for dashes: `grep -c "[–—]" README.md` should print 0.
+- [x] **Step 3:** Checkpoint: `docs: complete readme with setup, architecture and tradeoffs`
 
 ### Task 20: Walkthrough video
 
-- [ ] **Step 1:** Write `dev-docs/video-script.md`, a 3 to 5 minute script:
+- [x] **Step 1:** Write `dev-docs/video-script.md`, a 3 to 5 minute script:
   - demo the flow (45 s)
   - the schema and why facts are history (45 s)
   - the lease, the two-tab test and why not the other options (75 s)

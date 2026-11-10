@@ -4,21 +4,7 @@ Pandoras Box is a single Next.js app. A user signs in with Google, saves one fav
 
 ## 1. System context
 
-```mermaid
-flowchart LR
-  user([Browser])
-  subgraph vercel[Vercel]
-    app[Next.js app<br/>pages + API routes]
-  end
-  google[(Google OAuth)]
-  db[(Supabase Postgres)]
-  openai[(OpenAI API)]
-
-  user -- HTTPS --> app
-  app -- OAuth redirect and token exchange --> google
-  app -- Prisma over pooled connection --> db
-  app -- Responses API, server only --> openai
-```
+![System architecture: the browser talks only to the Next.js app; the server alone reaches Google, Postgres and OpenAI](diagrams/system-architecture.svg)
 
 The browser talks only to our app. Google, Postgres and OpenAI are reached from the server, so no secret ever reaches the client (D3, D15, D24).
 
@@ -78,45 +64,7 @@ Every file marked "server only" starts with `import "server-only"`, so the build
 
 ## 4. Data model
 
-```mermaid
-erDiagram
-  User ||--o{ Session : has
-  User ||--o{ Account : has
-  User ||--o{ Fact : has
-
-  User {
-    string id PK
-    string name
-    string email UK
-    boolean emailVerified
-    string image "nullable"
-    string favoriteMovie "nullable, null means onboarding"
-    datetime factLeaseUntil "nullable"
-    string factLeaseToken "nullable"
-    datetime createdAt
-    datetime updatedAt
-  }
-  Fact {
-    string id PK
-    string userId FK
-    string movieTitle "as the user typed it"
-    string movieKey "lowercased, spaces collapsed"
-    string text
-    datetime createdAt "timestamptz, default now()"
-  }
-  Session {
-    string id PK
-    string token UK
-    string userId FK
-    datetime expiresAt
-  }
-  Account {
-    string id PK
-    string userId FK
-    string providerId "google"
-    string accountId
-  }
-```
+![Data model: Better Auth's tables, three app columns on user, and the fact history table](diagrams/data-model.svg)
 
 - Better Auth owns `User`, `Session`, `Account` and `Verification`, and generates their Prisma models. We add three columns to `User` (D8, D13) and our own `Fact` model (D9).
 - `Fact` has an index on `(userId, movieKey, createdAt DESC)`. Both the "fresh fact" lookup and the "latest fact" fallback are a single index range scan.
@@ -127,33 +75,11 @@ erDiagram
 
 ### Sign-in and routing
 
-```mermaid
-sequenceDiagram
-  participant B as Browser
-  participant A as Next.js app
-  participant G as Google
-  participant D as Postgres
-
-  B->>A: GET / (no session)
-  A-->>B: Landing page
-  B->>A: Sign in with Google
-  A-->>B: Redirect to Google
-  B->>G: Consent
-  G-->>B: Redirect to /api/auth/callback/google
-  B->>A: Callback with code
-  A->>G: Exchange code for profile
-  A->>D: Upsert User and Account, refresh name/photo, insert Session
-  A-->>B: Set session cookie, redirect to /
-  B->>A: GET /
-  A->>D: requireUser(): look up session and user
-  alt favoriteMovie is null
-    A-->>B: Redirect /onboarding
-  else has a movie
-    A-->>B: Redirect /dashboard
-  end
-```
+![Sign-in: Google returns to Better Auth, which writes a session; the landing page routes on whether a movie is saved](diagrams/sign-in.svg)
 
 ### The one rule
+
+![Every API route runs withUser, requireUser and the handler, and every failure leaves as one error shape](diagrams/request-path.svg)
 
 `lib/dal.ts` exports `requireUser()`:
 
@@ -240,31 +166,13 @@ The movie rule in `lib/movie.ts` (D10) runs inside the `PUT` handler before anyt
 
 Releasing the lease is `UPDATE "user" SET "factLeaseUntil" = NULL, "factLeaseToken" = NULL WHERE id = $userId AND "factLeaseToken" = $token`. The token check stops a request that ran past its expiry from clearing a newer claim (D13). Release runs in a `finally` block.
 
-```mermaid
-sequenceDiagram
-  participant T1 as Tab 1
-  participant T2 as Tab 2
-  participant S as getFact()
-  participant D as Postgres
-  participant O as OpenAI
+![How getFact decides: fresh check, lease, generation cap, OpenAI, and the waiter path](diagrams/fact-flow.svg)
 
-  T1->>S: GET /api/fact
-  S->>D: fresh fact? (none)
-  S->>D: claim lease (wins)
-  T2->>S: GET /api/fact
-  S->>D: fresh fact? (none)
-  S->>D: claim lease (loses)
-  loop every 500 ms, up to 9 s
-    S->>D: fresh fact?
-  end
-  S->>O: generate (8 s timeout)
-  O-->>S: fact text
-  S->>D: insert Fact, release lease
-  S-->>T1: 200 source=generated
-  S-->>T2: 200 source=shared (same fact)
-```
+![Two tabs on two server instances make one OpenAI call; the loser polls and returns the same fact](diagrams/two-tabs.svg)
 
 ### Why this is correct across servers
+
+![Why a lease: an in-memory lock makes two calls, a unique constraint makes two calls for one row, an advisory lock holds a connection; the lease holds nothing](diagrams/lease-alternatives.svg)
 
 The lease claim is one atomic `UPDATE` with a condition. Postgres row locking means that only one of several concurrent claims can see an expired or empty lease and set it. The other servers see zero rows updated. No transaction stays open during the OpenAI call, so the connection pool isn't held hostage, and the approach works through Supabase's transaction pooler (D11).
 
@@ -289,28 +197,13 @@ The lease claim is one atomic `UPDATE` with a condition. Postgres row locking me
 
 ### Known limit
 
-Changing the movie skips the cache, so rapid movie changes cost one OpenAI call each. This is documented, not guarded (D18).
+Changing the movie skips the cache. A per-user cap of 20 facts per 10 minutes, counted under the lease, stops a loop of movie changes from buying unlimited OpenAI calls (ADR-042, which replaced D18).
 
 ## 8. Client (Variant B)
 
 ### Rendering split
 
-```mermaid
-flowchart TB
-  subgraph server[Server Component: dashboard/page.tsx]
-    req[requireUser] --> props[user + favoriteMovie]
-  end
-  subgraph client[Client components]
-    qc[QueryClientProvider]
-    me["useQuery ['me']<br/>initialData from server"]
-    fact["useQuery ['fact', movieKey]<br/>staleTime 30 s"]
-    edit["useMutation PUT /api/me/movie<br/>optimistic"]
-  end
-  props --> me
-  me --> fact
-  edit --> me
-  edit -. invalidates .-> fact
-```
+![Two cache layers: the browser answers within 30 seconds, the server within 60, and New fact skips only the browser](diagrams/cache-layers.svg)
 
 The server renders the profile and movie right away. The fact loads in the browser behind a skeleton, so OpenAI never delays the page (D22).
 
@@ -322,16 +215,7 @@ The server renders the profile and movie right away. The fact loads in the brows
 
 ### Inline edit flow
 
-```mermaid
-stateDiagram-v2
-  [*] --> Viewing
-  Viewing --> Editing: Edit
-  Editing --> Viewing: Cancel or Escape
-  Editing --> Editing: invalid title (inline error)
-  Editing --> Saving: Save (valid)
-  Saving --> Viewing: success (invalidate fact, ticket reloads)
-  Saving --> Viewing: failure (restore old title, toast)
-```
+![Optimistic edit: the new title shows at once, the fact query pauses, and a failure rolls back with a toast](diagrams/movie-edit.svg)
 
 The mutation follows TanStack's documented recipe:
 

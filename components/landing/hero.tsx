@@ -1,9 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
 import landingBackground from "@/public/landing-bg.jpg";
 import { HeroTitle } from "@/components/landing/hero-title";
 import { SignInButton, SignInLink } from "@/components/landing/sign-in-button";
 
-const REPO_URL = "https://github.com/VishalPatil18/pandoras-box";
+export const REPO_URL = "https://github.com/VishalPatil18/pandoras-box";
 // Content sits in one centered 1500px column; the painting and footer band stay full width.
 const COLUMN = "mx-auto w-full max-w-[1500px] px-5 md:px-12";
 const FOOTER_LINK =
@@ -42,14 +43,9 @@ export function Hero() {
           <div className="grid gap-1.5">
             <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-1 font-bold">
               <SignInLink className={FOOTER_LINK} />
-              <a
-                className={FOOTER_LINK}
-                href={`${REPO_URL}#readme`}
-                target="_blank"
-                rel="noreferrer"
-              >
+              <Link className={FOOTER_LINK} href="/docs">
                 Docs
-              </a>
+              </Link>
               <a
                 className={FOOTER_LINK}
                 href={`${REPO_URL}/blob/main/CHANGELOG.md`}

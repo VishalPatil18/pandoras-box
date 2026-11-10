@@ -123,9 +123,34 @@ Pandoras Box runs on a sticker-book logic: pastel paper canvas, huge inflated 3D
 
 ### Logo Mark
 
-**Role:** Brand identifier in nav
+**Role:** Brand identifier for the browser tab, the iOS home screen and the README
 
-Circular black-outlined 'S' badge, 1600px radius, 1px #000000 border on #ffffff fill. Sits top-left at fixed position across all sections.
+<img src="logo/pandoras-box.svg" width="96" alt="Pandoras Box logo: an open blue carton with a sunset movie window on its front">
+
+An open carton in isometric view, flaps up, with a movie window on its front face. It's a flat sticker like the rest of the system: black outlines with flat fills. The blues are sampled from the hero sky in `public/landing-bg.jpg`, so the logo matches the landing page.
+
+| Part | Color | Source |
+|---|---|---|
+| Flaps | `#355BC2` | Lower hero sky |
+| Front face | `#2346A0` | Upper hero sky |
+| Side face | `#173A8C` | Top of the hero sky |
+| Inside the box | `#0E2463` | Side face, darkened |
+| Window | `#355BC2` to `#6C77D5` to `#F7B9A6` | Hero sky down to the cloud pink |
+| Sun | `#FFD731` | Sunburst token |
+| Outlines | `#000000` | Carbon token |
+
+**Files**
+
+| File | Use |
+|---|---|
+| `design/logo/pandoras-box.svg` | The master logo, 64 unit grid. Use it at 48px and above. |
+| `app/icon.svg` | The favicon. Thicker outlines and a solid Sunburst window, so it reads at 16px. |
+| `app/apple-icon.png` | 180px, the master logo on Sky Wash `#dceeff`. Regenerate with `rsvg-convert` if the master changes. |
+
+**Rules**
+- Never recolor it, add a drop shadow, or put it on a background darker than the side face.
+- Below 48px use `app/icon.svg`. The master's sunset gradient turns to mud at small sizes.
+- The in-app header keeps the Bowlby One text wordmark. The logo doesn't replace it.
 
 ### Plus Menu Button
 

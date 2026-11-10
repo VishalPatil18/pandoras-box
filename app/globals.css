@@ -105,6 +105,86 @@
   }
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Long-form text on /docs. Justified paragraphs need hyphenation or the gaps get wide. */
+@layer components {
+  .docs-prose {
+    @apply text-[17px] leading-[1.7] text-carbon;
+  }
+  .docs-prose section {
+    scroll-margin-top: 2rem;
+  }
+  .docs-prose > section:first-child h2 {
+    @apply mt-0;
+  }
+  .docs-prose h2 {
+    @apply mt-16 mb-5 font-display text-[clamp(26px,3vw,34px)] leading-[1.05] uppercase;
+  }
+  .docs-prose h3 {
+    @apply mt-10 mb-3 text-xl font-bold;
+  }
+  .docs-prose h4 {
+    @apply mb-2 flex flex-wrap items-baseline gap-x-2 text-[17px] font-bold;
+  }
+  .docs-prose p {
+    @apply my-4 text-justify hyphens-auto;
+  }
+  .docs-prose ul,
+  .docs-prose ol {
+    @apply my-4 grid list-disc gap-2 pl-6;
+  }
+  .docs-prose a {
+    @apply font-bold underline underline-offset-4;
+  }
+  .docs-prose code {
+    @apply rounded-[6px] bg-mist px-1.5 py-0.5 text-[0.88em];
+  }
+  .docs-prose pre {
+    @apply my-5 overflow-x-auto rounded-card border border-carbon bg-carbon p-5 text-[14px] leading-[1.6] text-paper;
+  }
+  .docs-prose pre code {
+    @apply bg-transparent p-0 text-inherit;
+  }
+  .docs-prose blockquote {
+    @apply my-6 rounded-card border border-carbon bg-lavender px-6 py-4 font-bold;
+  }
+  .docs-prose .table-scroll {
+    @apply my-6 overflow-x-auto rounded-card border border-carbon;
+  }
+  .docs-prose table {
+    @apply w-full border-collapse text-left text-[15px] leading-snug;
+  }
+  .docs-prose th {
+    @apply bg-sky px-4 py-3 font-bold;
+  }
+  .docs-prose td {
+    @apply border-t border-carbon/20 px-4 py-3 align-top;
+  }
+  .docs-prose .tags {
+    @apply my-6 flex list-none flex-wrap gap-2 pl-0;
+  }
+  .docs-prose .tags li {
+    @apply rounded-pill border border-carbon bg-paper px-3 py-1 text-sm font-bold;
+  }
+  .docs-prose .decision {
+    @apply my-5 scroll-mt-8 rounded-card border border-carbon/25 px-5 py-4;
+  }
+  .docs-prose .decision p {
+    @apply my-2;
+  }
+  .docs-prose .decision-id {
+    @apply rounded-pill bg-sun px-2.5 py-0.5 text-[13px];
+  }
+  .docs-prose .decision-status {
+    @apply rounded-pill border border-carbon px-2.5 py-0.5 text-[13px] font-medium;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
