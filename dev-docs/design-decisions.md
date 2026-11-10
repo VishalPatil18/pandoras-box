@@ -356,3 +356,12 @@ New entries follow the ADR format in `CLAUDE.md`.
 - **Decision:** A. `reasoning: { effort: "none" }`.
 - **Why:** It's what D15 intended: no reasoning tokens, so all 150 output tokens go to the fact. The owner approved it.
 - **Consequences:** Trivia relies on the model's knowledge without a reasoning pass. If facts come back thin, `low` is the next step up, at some cost in tokens and latency.
+
+## ADR-034: Use Cult UI only where it fits the design system
+
+- **Date:** 2026-11-10 **Status:** accepted
+- **Context:** D28 mapped eight Cult UI components to the UI. Their registry entries add about 2,900 lines plus `motion`, `sonner` and `@radix-ui/react-use-controllable-state`. The `halo-*` components are built around glow, gradient and blur effects (up to 44 halo and 37 gradient references each), all of which DESIGN.md bans. `cutout-card` is an image card with a corner cut, not a ticket.
+- **Options:** A / install all eight and strip them. B / adopt only the components that fit and build the rest from the approved mockup. C / no Cult UI.
+- **Decision:** B. `rolling-number` drives the countdown digits. `collab-avatar` is adapted into `Avatar`, keeping its initials logic and entrance motion, adding a photo with an initials fallback, and using flat sticker styling. The shadcn `button` is restyled. The field, badge, toast, ticket and inline editor are small components written to match `design/mocks/`.
+- **Why:** It keeps Cult UI where it adds behavior and avoids vendoring effects the design system forbids. The owner chose B.
+- **Consequences:** The only new runtime dependency is `motion`. The components that would have come from Cult UI are about 300 lines of our own code to maintain.

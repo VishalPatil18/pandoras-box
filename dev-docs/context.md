@@ -94,3 +94,28 @@ What exists, how it works, and what is locked in. Entries are appended per sessi
 
 - ADR-033: reasoning effort is `none`.
 - `openai` 7.54.0 is pinned, because 7.55.0 was inside pnpm's one-day window.
+
+---
+
+## 2026-11-10: Client orchestration and app UI (plan Tasks 12 to 16, Variant B)
+
+### What exists
+
+- **Pages:** `/` (landing: marquee, wordmark over the ribbon, stickers, Google sign-in), `/onboarding` (movie form) and `/dashboard` (profile pill, logout, inline movie editor, fact ticket, New fact countdown). Each page is a server component that calls `getCurrentUser()` and redirects per the guard table.
+- **`lib/api.ts`:** `api.getMe`, `api.setMovie` and `api.getFact`. Every failure, network included, becomes one `ApiError { status, code, message, issues? }`.
+- **`lib/queries.ts`:** `useMe` (seeded from the server), `useFact(key, { enabled })` with a 30 second `staleTime`, and `useSetMovie` (optimistic, rolls back on error, invalidates facts only when the movie key changes).
+- **`components/providers.tsx`:** the QueryClient. Any 401 from a query or mutation sends the browser to `/` with a full page load.
+- **UI kit:** `components/ui/{button,field,avatar,rolling-number,badge,toast}.tsx`, `components/icons.tsx` (16 Rune icons) and `components/sticker.tsx`.
+- **Tests:** 76 in total, 29 frontend: the API client, providers, UI kit, onboarding, inline edit and fact ticket.
+
+### How it works
+
+- **Fact query key:** `["fact", movieKey]`. While a save is in flight the query is paused, and the ticket shows its skeleton. After success the new key fetches on its own. After failure the old title and its cached fact come back.
+- **The New fact button** counts down `secondsUntilRefresh` from the moment the response arrived (`dataUpdatedAt`), then calls `refetch()`.
+- **Sign-in** is `authClient.signIn.social({ provider: "google", callbackURL: "/" })`. The landing page then routes to onboarding or the dashboard.
+- **Logout** calls `authClient.signOut()`, then does a full page load to `/`.
+
+### Locked in
+
+- ADR-034: Cult UI is used only for `rolling-number` and the adapted avatar.
+- Pinned: `@tanstack/react-query` 5.107.1, `motion` 14.11.1, `msw` 3.0.4, `jsdom` 31.0.0, `@testing-library/react` 16.3.3, `@testing-library/dom` 10.4.2, `@testing-library/user-event` 14.6.8 (14.6.9 was inside pnpm's one-day window), `@testing-library/jest-dom` 7.0.1.

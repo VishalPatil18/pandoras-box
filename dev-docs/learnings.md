@@ -41,3 +41,15 @@ Lessons from each feature cycle. Append only; past entries are never edited.
 - **`next/headers` throws outside a request scope.** To test a route's real auth path, stub `headers()` to return a request without a cookie, rather than mocking the data access layer.
 - **Module-level memoized clients survive between tests.** Use `vi.resetModules()` and re-import the module to assert construction.
 - **Example text inside a prompt leaks.** An example title such as "Inception (2010):" sits in the instructions the model reads. Use neutral placeholders.
+
+---
+
+## 2026-11-10: Client orchestration and app UI (plan Tasks 12 to 16)
+
+- **Check a component library's source against the design system before adopting it.** Counting glow, gradient and shadow references in Cult UI's registry JSON showed most components would be rewritten, not restyled.
+- **An optimistic edit that changes a query key can fetch stale data under the new key.** Pause the dependent query until the mutation settles.
+- **MSW 3 renamed `onUnhandledRequest` to `onUnhandledFrame`.** Vitest doesn't type-check, so the old option was silently ignored until `tsc` ran.
+- **Tailwind can't generate classes built with template strings.** Put dynamic values in a CSS variable and reference it from literal classes.
+- **jsdom won't let tests replace `window.location.assign`.** Route full-page navigations through a small module the tests can mock.
+- **Vite 8 compiles TSX for Vitest on its own.** `@vitejs/plugin-react` wasn't needed.
+- **A background `next start` can outlive its session and keep the port.** Kill by the port's listening PID, not by command name, before starting a new server.

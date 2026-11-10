@@ -394,7 +394,9 @@ Install in the task that first uses them, re-checking that each version is still
 
 # Phase 4: Variant B and the UI
 
-### Task 12: Typed API client
+### Task 12: Typed API client ✅
+
+> **As built:** MSW 3 renamed `onUnhandledRequest` to `onUnhandledFrame`. `request()` resolves paths against `window.location.origin`, so Node's fetch accepts them in tests. A 401 or 500 without a JSON error body still maps to `UNAUTHENTICATED` or `INTERNAL`.
 
 **Files:**
 - Create: `lib/api.ts`, `tests/setup/frontend.ts` (jest-dom, the MSW `setupServer`, reset handlers after each test)
@@ -415,7 +417,9 @@ Install in the task that first uses them, re-checking that each version is still
 - [ ] **Step 2:** Run them. Expected: FAIL. **Step 3:** Implement FR-API-4. **Step 4:** Run them. Expected: PASS.
 - [ ] **Step 5:** Checkpoint: `feat(client): add typed api client with normalized errors`
 
-### Task 13: Query layer and providers
+### Task 13: Query layer and providers ✅
+
+> **As built:** `useFact(key, { enabled })` is paused while a movie save is in flight (`useIsMutating` on `setMovieMutationKey`). Otherwise the optimistic title would fetch the old movie's fact under the new key. On success, facts are invalidated with `refetchType: "none"`, and not at all for a capitalization-only change. The 401 redirect goes through `lib/navigation.ts` (`goToLanding`), because jsdom won't let tests replace `window.location.assign`.
 
 **Files:**
 - Create: `lib/queries.ts`, `components/providers.tsx`
@@ -436,7 +440,9 @@ Install in the task that first uses them, re-checking that each version is still
 - [ ] **Step 2:** Run them. Expected: FAIL. **Step 3:** Implement it, and wrap `app/layout.tsx` children in `<Providers>`. **Step 4:** Run it. Expected: PASS.
 - [ ] **Step 5:** Checkpoint: `feat(client): add query hooks, providers and 401 redirect`
 
-### Task 14: UI kit from Cult UI and the icons
+### Task 14: UI kit from Cult UI and the icons ✅
+
+> **As built (ADR-034):** only `rolling-number` and an adapted `collab-avatar` come from Cult UI. `Field`, `Badge`, `Toast`, `Button` and `Sticker` are written to match the mockup. `components/icons.tsx` is generated from `design/icons/*.svg`. No `@vitejs/plugin-react` was needed.
 
 **Files:**
 - Create: `components/ui/*` (from the shadcn CLI), `components/icons.tsx`, `components/sticker.tsx`
@@ -466,7 +472,9 @@ Install in the task that first uses them, re-checking that each version is still
   Expected: PASS.
 - [ ] **Step 5:** Checkpoint: `feat(ui): add design system components restyled from cult ui`
 
-### Task 15: Landing, onboarding and page guards
+### Task 15: Landing, onboarding and page guards ✅
+
+> **As built:** the sign-in button is its own small client component (`components/landing/sign-in-button.tsx`), so the rest of the landing page renders on the server. The marquee animation lives in the `@theme` block of `globals.css`.
 
 **Files:**
 - Create: `app/page.tsx`, `app/onboarding/page.tsx`, `components/landing/hero.tsx`, `components/landing/marquee.tsx`, `components/landing/ribbon.tsx`, `components/onboarding-form.tsx`, `lib/display.ts`
@@ -491,7 +499,9 @@ Install in the task that first uses them, re-checking that each version is still
 - [ ] **Step 4:** Run the tests. Expected: PASS. Then check by hand with `pnpm dev`: the landing at 1440px and 400px wide looks like the mockup.
 - [ ] **Step 5:** Checkpoint: `feat: add landing and onboarding with session-based routing`
 
-### Task 16: Dashboard with inline edit, fact ticket and countdown
+### Task 16: Dashboard with inline edit, fact ticket and countdown ✅
+
+> **As built:** the countdown starts from TanStack's `dataUpdatedAt`. The ticket's stub width is a CSS variable (`[--stub:…]`), because Tailwind can't see classes built with template strings. `tests/frontend/dashboard-helpers.tsx` provides a stateful fake backend for the dashboard tests. Step 5 (real keys) is still open.
 
 **Files:**
 - Create: `app/dashboard/page.tsx`, `components/dashboard/dashboard.tsx`, `components/dashboard/profile-pill.tsx`, `components/dashboard/movie-editor.tsx`, `components/dashboard/fact-ticket.tsx`, `components/dashboard/new-fact-button.tsx`, `lib/countdown.ts`
