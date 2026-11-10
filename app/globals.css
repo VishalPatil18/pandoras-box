@@ -114,3 +114,19 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Toast icons by type. Success and error are filled dots; info and warning are outline glyphs. */
+.nt-shell .nt-icon-success {
+  background: var(--color-mint);
+  color: var(--color-carbon);
+}
+.nt-shell .nt-icon-error {
+  background: #ef4444;
+  color: var(--color-paper);
+}
+.nt-shell .nt-icon-info {
+  color: var(--color-blue);
+}
+.nt-shell .nt-icon-warning {
+  color: var(--color-sun);
+}

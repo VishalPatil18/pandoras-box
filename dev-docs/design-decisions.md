@@ -356,3 +356,134 @@ New entries follow the ADR format in `CLAUDE.md`.
 - **Decision:** A. `reasoning: { effort: "none" }`.
 - **Why:** It's what D15 intended: no reasoning tokens, so all 150 output tokens go to the fact. The owner approved it.
 - **Consequences:** Trivia relies on the model's knowledge without a reasoning pass. If facts come back thin, `low` is the next step up, at some cost in tokens and latency.
+
+## ADR-034: Use Cult UI only where it fits the design system
+
+- **Date:** 2026-11-10 **Status:** accepted
+- **Context:** D28 mapped eight Cult UI components to the UI. Their registry entries add about 2,900 lines plus `motion`, `sonner` and `@radix-ui/react-use-controllable-state`. The `halo-*` components are built around glow, gradient and blur effects (up to 44 halo and 37 gradient references each), all of which DESIGN.md bans. `cutout-card` is an image card with a corner cut, not a ticket.
+- **Options:** A / install all eight and strip them. B / adopt only the components that fit and build the rest from the approved mockup. C / no Cult UI.
+- **Decision:** B. `rolling-number` drives the countdown digits. `collab-avatar` is adapted into `Avatar`, keeping its initials logic and entrance motion, adding a photo with an initials fallback, and using flat sticker styling. The shadcn `button` is restyled. The field, badge, toast, ticket and inline editor are small components written to match `design/mocks/`.
+- **Why:** It keeps Cult UI where it adds behavior and avoids vendoring effects the design system forbids. The owner chose B.
+- **Consequences:** The only new runtime dependency is `motion`. The components that would have come from Cult UI are about 300 lines of our own code to maintain.
+
+## ADR-035: Photo-framed landing page and a centered app column
+
+- **Date:** 2026-11-10 **Status:** accepted
+- **Context:** The owner reviewed the running app and gave a reference image for the landing page, plus feedback: the box logo meant nothing, the account area looked awkward, and the dashboard stretched edge to edge.
+- **Options:** A / keep the DESIGN.md sticker landing (Sky Wash, marquee, no photography). B / follow the owner's reference.
+- **Decision:** B.
+  - **Landing:** one rounded frame filled by the painting `public/landing-bg.jpg`, sized to the viewport with no scrolling. It has a white wordmark over the ribbon, two stickers, a white tagline, a hand-lettered Sign in button (Gochi Hand, loaded through `next/font`), and a translucent footer with Sign in, Docs, Changelog and Github links plus "Built by Vishal" linked to vishalpatil.tech.
+  - **Removed:** the marquee, the box logo and the third sticker.
+  - **Dashboard and onboarding:** content sits in a centered 1200px column, and a small text wordmark replaces the box.
+  - **Account controls:** photo, name, email and Log out form one joined pill. On phones it collapses to the photo plus a log-out icon.
+- **Why:** The owner's direction.
+- **Consequences:**
+  - DESIGN.md's "no photography" and "marquee" rules no longer apply to the landing page. The app screens keep the DESIGN.md system.
+  - The painting carries a "WARMCORNER AI" mark, which stays as the artist's credit.
+  - A third font adds one small request, on the landing page only.
+
+## ADR-036: Full-bleed landing and a waving Ember strip
+
+- **Date:** 2026-11-10 **Status:** accepted (refines ADR-035)
+- **Context:** In a second review, the owner asked for the photo to reach every edge, a strip that is visible on the painting and spans the full width, motion on the strip and stickers, and the plain UI font on Sign in.
+- **Options:** none; these were the owner's direction.
+- **Decision:**
+  - **Frame:** removed. The image fills the viewport.
+  - **Strip:** full width and Ember with a dark outline. Its curve morphs between two shapes on a 7 second mirrored loop with `motion`.
+  - **Stickers:** they bob on the same period (`animate-float`). The clapperboard sticker is now Mint so it stands apart from the strip.
+  - **Sign in:** set in General Sans, and the Gochi Hand font is removed.
+- **Why:** Owner feedback on the running app.
+- **Consequences:**
+  - The ribbon's grain filter is gone, because re-rendering `feTurbulence` on a moving path every frame is expensive.
+  - Both animations stop when the user prefers reduced motion.
+
+## ADR-037: notch-toast for notifications, and a printing ticket
+
+- **Date:** 2026-11-10 **Status:** accepted (replaces the hand-built Toast from ADR-034)
+- **Context:** The owner asked for toasts on sign-in, sign-out, onboarding, fact generation start and end, and errors, using notch-toast (`position="top-center"`, `mode="attached"`, `animation="gooey"`, 5 second duration). They also asked for the whole ticket, not just the button, to show that a fact is generating, and for a richer ticket.
+- **Options:** none; the owner named the library and the settings.
+- **Decision:**
+  - **Toast library:** `notch-toast` 0.2.0 (MIT, peers React 19 and motion 14, no dependencies of its own) is pinned. `<NotchToaster>` lives in `Providers`.
+  - **One module:** every call goes through `lib/notify.ts`, which applies `duration: 5000`. The custom `components/ui/toast.tsx` is deleted.
+  - **Cross-page toasts:** messages that span a full page load travel as `?toast=<key>`, and only the whitelisted keys in `FLASH_MESSAGES` are shown. `FlashToast` shows the toast and strips the flag. The landing page forwards `signed-in` to wherever it redirects.
+  - **Fact toasts:** "Generating a new fact" on New fact or a movie change, "New fact ready" for `generated` or `shared` results, a warning for `fallback`, an error for failures. A `cache` result dismisses a pending loading toast.
+  - **Ticket while generating:** the whole ticket rocks (`animate-ticket-print`), the perforation's dashes march (`animate-perforate`), the stub title pulses, and the body reads "Printing a new fact".
+  - **Ticket details:** an inner keyline frame, the "Title (Year)" prefix pulled out as the heading line, a divider above the meta row, and a barcode on the stub derived from the title.
+- **Why:** The owner's direction.
+- **Consequences:**
+  - The library is young: version 0.x, one maintainer, and two releases. It's pinned exactly, and the wrapper means swapping it touches one file.
+  - It renders one toast at a time, so a newer toast replaces an older one.
+
+## ADR-038: Animated title replaces the strip; ticket stub reorder
+
+- **Date:** 2026-11-10 **Status:** accepted (supersedes the strip and stickers from ADR-036)
+- **Context:** The owner asked to drop the landing strip and stickers and animate the "Pandoras Box" title instead (with motion), to remove the ticket's second border, and to put the barcode above the movie name at a shared width.
+- **Options:** none; the owner's direction.
+- **Decision:**
+  - **Title entrance:** `components/landing/hero-title.tsx` animates each letter out of a clipped line with a springy settle and slight tilt, staggered, "Pandoras" first and then "Box". The tagline fades up after.
+  - **Title hover:** a letter lifts on hover. Nothing loops.
+  - **Title semantics:** the `<h1>` keeps `aria-label="Pandoras Box"`, and the letter spans are hidden from screen readers.
+  - **Removed:** `ribbon.tsx` and the float animation.
+  - **Ticket:** the inner keyline is removed.
+  - **Stub:** the barcode draws along the stub's direction (bars in a row on phones, stacked on desktop) and sits above the title. Both live in one wrapper sized by the title, so they always share a width. On desktop, long titles wrap into extra vertical columns instead of being cut off.
+  - **Dashboard title (agent's call):** it steps down in size for long titles, so the ticket stays in view and words don't break mid-word.
+- **Why:** The owner's direction. The title scaling fixes a problem a long title showed in testing.
+- **Consequences:** The landing page has one authored motion moment, the entrance, plus hover. Reduced motion shows the title already in place.
+
+## ADR-039: New fact button inside the ticket, barcode beside the name
+
+- **Date:** 2026-11-10 **Status:** accepted (refines ADR-038)
+- **Context:** The owner asked for a 40% taller landing footer, a better-placed and animated New fact button, the barcode left of the movie name (per a reference screenshot), and a smaller ticket.
+- **Options:** none; the owner's direction.
+- **Decision:**
+  - **Footer:** vertical padding goes from 16/20px to 31/37px.
+  - **Ticket:** a smaller fact font and padding, a narrower stub, no forced minimum height, and a smaller stub title (34px, or 26px for long names).
+  - **Barcode:** on desktop it sits to the left of the name and stretches to the name's height. On phones it stays above the name.
+  - **New fact button:**
+    - It moves into the ticket's bottom row beside the meta.
+    - It's a `motion.button` that animates its size changes, with a draining countdown ring, a pop into the ready state, a hover lift and a press squash.
+    - The label crossfades between states (`AnimatePresence`), and the sparkle icon spins in when the button unlocks.
+    - None of it animates under reduced motion.
+- **Why:** The owner's direction.
+- **Consequences:** The countdown test now waits for the exit animation of the "New fact in" label before checking the ready state.
+
+## ADR-040: Rolling-paper ticket, colored toast icons, centered landing column
+
+- **Date:** 2026-11-10 **Status:** accepted
+- **Context:** The owner asked for:
+  - the landing title centered on phones, and a centered 1500px landing column;
+  - the ticket's semicircle cutouts on mobile too;
+  - a paper-roll animation while a fact generates;
+  - toast icons colored by type.
+- **Options:** none; the owner's direction.
+- **Decision:**
+  - **Landing:** header, content and the footer's contents sit in `max-w-[1500px] mx-auto`. On phones the title and tagline center horizontally and vertically.
+  - **Mobile ticket:** half-circle notches at both ends of the horizontal seam.
+  - **`RollingPaper`:** a `motion` value clips the fact from the left while a cylinder rides the clip edge and thickens. New fact rolls the paper left to right and shows "Printing a new fact" behind it; the result unrolls right to left. The old ticket wobble is removed.
+  - **Toast icons:** styled through notch-toast's `nt-icon-<type>` classes in `globals.css`. Success is Mint green and error is red (filled dots); info is blue and warning is Sunburst yellow (glyph color).
+- **Why:** The owner's direction.
+- **Consequences:**
+  - The roll respects reduced motion, jumping straight to the end state.
+  - The toast colors depend on notch-toast's class names, so recheck them if the library is upgraded.
+
+## ADR-041: The whole ticket rolls
+
+- **Date:** 2026-11-10 **Status:** accepted (replaces the text-only `RollingPaper` from ADR-040)
+- **Context:** The owner asked for the whole ticket, not just the fact text, to roll while a fact generates, with a polished look.
+- **Options:** none; the owner's direction.
+- **Decision:** `RollingTicket` wraps the entire `<article>`, body and stub together. One `motion` value drives everything:
+  - a clip path that winds the ticket left to right in 0.85 s, then unwinds it right to left in 1.05 s on an ease-in-out curve;
+  - a cylinder that rides the edge and thickens from 35% to 100% as paper collects;
+  - an outer layer that turns Sunburst once the stub winds on;
+  - a curl shadow on the paper side of the roll;
+  - a gentle sway while the ticket is parked.
+
+  The "Printing a new fact" placeholder fades in behind the rolled ticket. The first load unrolls into view.
+- **Why:** The ticket is a paper object, so rolling it explains "a new one is being printed" better than a spinner.
+- **Consequences:**
+  - Only clip path, transform and opacity animate, so there's no layout thrash.
+  - Under reduced motion the ticket and the placeholder swap with no movement.
+- **Addendum (same day):**
+  - **Phones roll bottom to top.** Below Tailwind's `md` breakpoint the ticket is stacked, so it winds upward into a horizontal roll parked at the top. The core is Sunburst, because the stub at the bottom winds on first.
+  - **Direction detection:** `useIsDesktop()` (`useSyncExternalStore` on `matchMedia`) picks the axis. The roll element is keyed by axis so a stale `left` from the server render can't linger.
+  - **Tests:** the frontend setup stubs `window.matchMedia`, which jsdom lacks.

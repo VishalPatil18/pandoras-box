@@ -41,3 +41,40 @@ Lessons from each feature cycle. Append only; past entries are never edited.
 - **`next/headers` throws outside a request scope.** To test a route's real auth path, stub `headers()` to return a request without a cookie, rather than mocking the data access layer.
 - **Module-level memoized clients survive between tests.** Use `vi.resetModules()` and re-import the module to assert construction.
 - **Example text inside a prompt leaks.** An example title such as "Inception (2010):" sits in the instructions the model reads. Use neutral placeholders.
+
+---
+
+## 2026-11-10: Client orchestration and app UI (plan Tasks 12 to 16)
+
+- **Check a component library's source against the design system before adopting it.** Counting glow, gradient and shadow references in Cult UI's registry JSON showed most components would be rewritten, not restyled.
+- **An optimistic edit that changes a query key can fetch stale data under the new key.** Pause the dependent query until the mutation settles.
+- **MSW 3 renamed `onUnhandledRequest` to `onUnhandledFrame`.** Vitest doesn't type-check, so the old option was silently ignored until `tsc` ran.
+- **Tailwind can't generate classes built with template strings.** Put dynamic values in a CSS variable and reference it from literal classes.
+- **jsdom won't let tests replace `window.location.assign`.** Route full-page navigations through a small module the tests can mock.
+- **Vite 8 compiles TSX for Vitest on its own.** `@vitejs/plugin-react` wasn't needed.
+- **A background `next start` can outlive its session and keep the port.** Kill by the port's listening PID, not by command name, before starting a new server.
+
+---
+
+## 2026-11-10: Owner design review
+
+- **SVG filters clip to the element's bounding box plus 10% by default.** A wide stroke under a filter loses its edges, and the outline stroke underneath shows through as black slabs. Set `filterUnits="userSpaceOnUse"` with a region that covers the whole drawing.
+- **zsh doesn't split unquoted variables into words,** so `set -- $spec` doesn't split as it would in bash. Write each command out or use arrays.
+- **Signed-in pages can be screenshotted without OAuth:** insert a session row, sign the token the way better-call does (`token.base64(HMAC-SHA256(secret, token))`, URL-encoded), and set the cookie through the Chrome DevTools Protocol. Delete the test user afterwards.
+
+---
+
+## 2026-11-10: Toasts and ticket polish
+
+- **A toast has to cross a full page load to survive sign-in and sign-out.** Pass a whitelisted key in the URL and strip it after showing, so reloads don't repeat it and crafted URLs can't show arbitrary text.
+- **A page that redirects has to forward the flag,** or the toast is lost on the way (the landing page to the dashboard after OAuth).
+- **Once `FlashToast` sits in `Providers`, every component test that renders `Providers` needs `next/navigation` mocked.** A global mock in the setup file keeps the tests simple.
+- **A tall vertical stub can out-grow the text.** A flex column with the meta row on `mt-auto` keeps the ticket body balanced.
+
+---
+
+## 2026-11-10: Title animation and stub
+
+- **`cn` (tailwind-merge) treats a `text-*` size as conflicting with `leading-*`.** Put the size class first or the line height silently disappears.
+- **To make two elements share a width, put them in a `w-fit` wrapper and stretch the follower (`items-stretch`, `w-full`).** Vertical text that wraps into columns then drives the width.
+- **Draw a decorative graphic in the direction it's shown rather than rotating it.** A rotated element keeps its unrotated layout box.
