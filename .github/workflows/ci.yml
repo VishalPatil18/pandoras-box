@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:17
+        env:
+          POSTGRES_USER: pandoras
+          POSTGRES_PASSWORD: pandoras
+          POSTGRES_DB: pandoras
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U pandoras"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 15
+    env:
+      DATABASE_URL: postgresql://pandoras:pandoras@localhost:5432/pandoras
+      DIRECT_URL: postgresql://pandoras:pandoras@localhost:5432/pandoras
+      BETTER_AUTH_SECRET: ci-only-secret-not-used-anywhere-real
+      BETTER_AUTH_URL: http://localhost:3000
+      GOOGLE_CLIENT_ID: ci-placeholder
+      GOOGLE_CLIENT_SECRET: ci-placeholder
+      OPENAI_API_KEY: ci-placeholder
+      OPENAI_MODEL: gpt-5.4-mini
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: pnpm/action-setup@v6.1.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build

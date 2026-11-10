@@ -160,7 +160,7 @@ Each step has an output and an exit gate. A step doesn't start until the previou
 - [x] For each flaw: how Pandoras Box avoids it, scoped to what the brief rewards (no over-engineering).
 - **Gate:** owner reads research part 2.
 
-### Step 3 - Grilling session → `design-decision.md` + `architecture.md` ✅
+### Step 3 - Grilling session → `design-decisions.md` + `architecture.md` ✅
 
 - [x] Owner is **sole decision maker**. Agent proposes options with plain-language explanations; nothing is assumed.
 - [x] Decisions to settle (minimum list - more may surface):
@@ -223,7 +223,7 @@ Each step has an output and an exit gate. A step doesn't start until the previou
 | -------------------- | ---- | ----------------------------------- |
 | `epic.md`            | 0    | This checklist                      |
 | `research.md`        | 1, 2 | Market research + flaw analysis     |
-| `design-decision.md` | 3    | Owner's decisions, ADR format       |
+| `design-decisions.md` | 3    | Owner's decisions, ADR format       |
 | `architecture.md`    | 3    | System architecture                 |
 | `srs.md`             | 4    | Software requirements specification |
 | `plan.md`            | 5    | Phased build plan                   |
@@ -232,4 +232,4 @@ Code lives at the repo root; `.claude/` is untouched.
 
 ## 8. Open decisions
 
-All decisions are settled and recorded in `design-decision.md` (D1 to D30). UI direction is approved: ticket stub on the DESIGN.md system, mockups in `design/mocks/`.
+All decisions are settled and recorded in `design-decisions.md` (D1 to D30). UI direction is approved: ticket stub on the DESIGN.md system, mockups in `design/mocks/`.

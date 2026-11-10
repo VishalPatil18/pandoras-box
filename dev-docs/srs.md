@@ -2,7 +2,7 @@
 
 Version 1.0, 2026-11-10. Owner: Vishal Patil.
 
-This spec turns the exercise brief and the owner's decisions into requirements that can be built and tested. Each requirement has an ID, a statement, and acceptance criteria. Decision IDs (D1, D2 …) point to [design-decision.md](design-decision.md), and section references marked "arch" point to [architecture.md](architecture.md).
+This spec turns the exercise brief and the owner's decisions into requirements that can be built and tested. Each requirement has an ID, a statement, and acceptance criteria. Decision IDs (D1, D2 …) point to [design-decisions.md](design-decisions.md), and section references marked "arch" point to [architecture.md](architecture.md).
 
 The words **must**, **should** and **may** carry their usual meaning: must is required, should is expected unless there's a stated reason not to, and may is optional.
 
@@ -45,7 +45,7 @@ Out of scope:
 ### 1.4 References
 
 - Exercise brief: [SWE_Take-Home_Exercise_(Full-Stack).pdf](SWE_Take-Home_Exercise_(Full-Stack).pdf)
-- [research.md](research.md), [design-decision.md](design-decision.md), [architecture.md](architecture.md)
+- [research.md](research.md), [design-decisions.md](design-decisions.md), [architecture.md](architecture.md)
 - Visual system: [design/DESIGN.md](../design/DESIGN.md)
 - Mockups: [design/mocks/index.html](../design/mocks/index.html)
 
@@ -478,4 +478,4 @@ The repo also includes:
 
 ## 12. Open questions
 
-None. All load-bearing decisions are recorded in [design-decision.md](design-decision.md).
+None. All load-bearing decisions are recorded in [design-decisions.md](design-decisions.md).

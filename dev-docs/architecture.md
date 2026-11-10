@@ -1,6 +1,6 @@
 # Architecture: Pandoras Box
 
-Pandoras Box is a single Next.js app. A user signs in with Google, saves one favorite movie, and sees a dashboard with an AI-generated fact about it. This document describes how the pieces fit together. The reasons behind each choice are in [design-decision.md](design-decision.md), cited below as D1, D2 and so on.
+Pandoras Box is a single Next.js app. A user signs in with Google, saves one favorite movie, and sees a dashboard with an AI-generated fact about it. This document describes how the pieces fit together. The reasons behind each choice are in [design-decisions.md](design-decisions.md), cited below as D1, D2 and so on.
 
 ## 1. System context
 
