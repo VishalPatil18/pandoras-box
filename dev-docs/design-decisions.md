@@ -347,3 +347,12 @@ New entries follow the ADR format in `CLAUDE.md`.
 - **Decision:** A. `cacheComponents: false` in `next.config.ts`. `partialPrefetching` is removed too, because Next rejects it without `cacheComponents`.
 - **Why:** Every page in the app is specific to the signed-in user, so there's no shared shell worth caching. Server redirects keep the guard table in architecture §5 exactly as written, with no flash of the wrong page.
 - **Consequences:** No static-shell prefetching. The Next docs say both features will be on everywhere in the next major release, so upgrading to Next 17 means adopting the Suspense pattern (option B).
+
+## ADR-033: Reasoning effort is "none", not "minimal"
+
+- **Date:** 2026-11-10 **Status:** accepted
+- **Context:** D15 asked for `gpt-5.4-mini` with reasoning effort "minimal", so the output cap goes to the fact. OpenAI's model page lists the supported values as `none` (default), `low`, `medium`, `high` and `xhigh`. "minimal" isn't one of them for this model.
+- **Options:** A / use `none`. B / use `low`. C / change the model to one that accepts `minimal`.
+- **Decision:** A. `reasoning: { effort: "none" }`.
+- **Why:** It's what D15 intended: no reasoning tokens, so all 150 output tokens go to the fact. The owner approved it.
+- **Consequences:** Trivia relies on the model's knowledge without a reasoning pass. If facts come back thin, `low` is the next step up, at some cost in tokens and latency.

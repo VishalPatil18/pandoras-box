@@ -30,3 +30,14 @@ Lessons from each feature cycle. Append only; past entries are never edited.
 - **Better Auth's `mapProfileToUser` must return `image` as `string | undefined`,** never `null`.
 - **Specs beat plans.** The plan reversed srs §5.1's order (control-character check before whitespace collapsing), which would have rejected pasted tabs. Writing the test first surfaced the conflict.
 - **`next build` evaluates the auth route module,** so the Google and auth env vars must exist at build time (CI uses placeholders).
+
+---
+
+## 2026-11-10: Fact service and API (plan Tasks 7 to 11)
+
+- **Check a model's accepted parameter values against its own model page.** `gpt-5.4-mini` takes `reasoning.effort` `none`, `low`, `medium`, `high` or `xhigh`, but not `minimal`, even though the SDK type includes `minimal` for other models.
+- **The race was real before the guard existed.** The five-request test failed with several OpenAI calls before the lease went in. Writing the concurrency test first is what proves the guard does something.
+- **A waiter that only polls can get stuck behind someone else's generation for a different movie.** Retrying the lease claim on every poll lets it take over the moment the old generation finishes.
+- **`next/headers` throws outside a request scope.** To test a route's real auth path, stub `headers()` to return a request without a cookie, rather than mocking the data access layer.
+- **Module-level memoized clients survive between tests.** Use `vi.resetModules()` and re-import the module to assert construction.
+- **Example text inside a prompt leaks.** An example title such as "Inception (2010):" sits in the instructions the model reads. Use neutral placeholders.

@@ -269,7 +269,9 @@ Install in the task that first uses them, re-checking that each version is still
 
 # Phase 3: Variant A, the fact service and API
 
-### Task 7: `/api/me` and `/api/me/movie`
+### Task 7: `/api/me` and `/api/me/movie` ✅
+
+> **As built:** Request validation lives in `parseBody(request, schema)` in `lib/http.ts`. It turns bad JSON or a Zod miss into `VALIDATION_ERROR` with field issues. So `setFavoriteMovie(userId, movie: string): Promise<string>` takes an already-normalized title.
 
 **Files:**
 - Create: `app/api/me/route.ts`, `app/api/me/movie/route.ts`, `lib/users.ts`
@@ -288,7 +290,9 @@ Install in the task that first uses them, re-checking that each version is still
 - [ ] **Step 2:** Run them. Expected: FAIL. **Step 3:** Implement. **Step 4:** Run them. Expected: PASS.
 - [ ] **Step 5:** Checkpoint: `feat(api): add me and movie endpoints`
 
-### Task 8: The OpenAI call
+### Task 8: The OpenAI call ✅
+
+> **As built:** `openai` is pinned to 7.54.0 (7.55.0 was inside pnpm's one-day window). `reasoning.effort` is `"none"` because `gpt-5.4-mini` doesn't accept `"minimal"` (ADR-033). The client is created on first use so imports never need the key. Output passes a Zod check (trimmed, 1 to 600 characters). The format example in the instructions is the neutral `Title (Year):`.
 
 **Files:**
 - Create: `lib/openai.ts`
@@ -306,13 +310,15 @@ Install in the task that first uses them, re-checking that each version is still
   - `throws FactGenerationError on incomplete or blank output`.
   - `client is built with timeout 8000 and maxRetries 0`.
 - [ ] **Step 2:** Run them. Expected: FAIL.
-- [ ] **Step 3:** Implement with `server-only`, one module-level `new OpenAI({ timeout: 8000, maxRetries: 0 })`, and `responses.create({ model, instructions, input, max_output_tokens: 150, reasoning: { effort: "minimal" } })`.
+- [ ] **Step 3:** Implement with `server-only`, one module-level `new OpenAI({ timeout: 8000, maxRetries: 0 })`, and `responses.create({ model, instructions, input, max_output_tokens: 150, reasoning: { effort: "none" } })`.
   - Return `output_text.trim()`.
   - The `instructions` text is the FR-FACT-2 rule list, written as plain sentences.
 - [ ] **Step 4:** Run them. Expected: PASS.
 - [ ] **Step 5:** Checkpoint: `feat(ai): add server-only fact generation with timeout and prompt rules`
 
-### Task 9: `getFact`, the cache path
+### Task 9: `getFact`, the cache path ✅
+
+> **As built:** `tests/setup/db.ts` gained `insertFact(userId, { movieTitle, text, ageSeconds })`, which backdates using the database clock.
 
 **Files:**
 - Create: `lib/facts.ts`
@@ -336,7 +342,9 @@ Install in the task that first uses them, re-checking that each version is still
 - [ ] **Step 4:** Run them. Expected: PASS.
 - [ ] **Step 5:** Checkpoint: `feat(facts): serve facts from a 60 second database window`
 
-### Task 10: Lease and concurrency
+### Task 10: Lease and concurrency ✅
+
+> **As built:** Before the lease existed, the five-request test failed with several OpenAI calls, which confirmed the race was real. The waiting loop's 9 second deadline uses the app clock, which is fine because it only limits waiting. The window and the lease expiry use Postgres `now()`.
 
 **Files:**
 - Modify: `lib/facts.ts`
@@ -362,7 +370,9 @@ Install in the task that first uses them, re-checking that each version is still
 - [ ] **Step 4:** Run them. Expected: PASS.
 - [ ] **Step 5:** Checkpoint: `feat(facts): add lease so concurrent requests share one generation`
 
-### Task 11: Fallback, the fact route and authorization
+### Task 11: Fallback, the fact route and authorization ✅
+
+> **As built:** The 401 test runs the real `withUser` → `requireUser` → Better Auth chain, with only `next/headers` stubbed to a request without a cookie. Only `FactGenerationError` triggers the fallback; any other error surfaces as `INTERNAL`.
 
 **Files:**
 - Modify: `lib/facts.ts`
