@@ -66,7 +66,7 @@ lib/
 prisma/
   schema.prisma
   migrations/
-prisma.config.ts
+prisma7.config.ts
 tests/
   backend/                    Variant A tests (real Postgres)
   frontend/                   Variant B tests (MSW + React Testing Library)

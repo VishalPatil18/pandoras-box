@@ -17,3 +17,16 @@ Lessons from each feature cycle. Append only; past entries are never edited.
 - **`tsc --noEmit` fails on Next's generated global types** (`LayoutProps`) unless `next typegen` runs first.
 - **`cmd | tail` hides the exit code.** Use `set -o pipefail` when chaining checks.
 - **Prettier on the whole repo reformats hand-written Markdown tables.** Markdown and design files are ignored.
+
+---
+
+## 2026-11-10: Data, auth and validation (plan Tasks 3 to 6)
+
+- **Prisma 7.10 looks for `prisma7.config.ts`.** Earlier 7.x versions used `prisma.config.ts`. Both the Better Auth guide and Prisma's own package strings confirm it.
+- **The Better Auth schema CLI is now the `auth` package** (`pnpm dlx auth@<version> generate`). It can't load a config that imports `server-only`.
+- **pnpm 12 enforces a one-day minimum release age** and quietly adds exclusions to `pnpm-workspace.yaml` when you install something newer. Check `npm view <pkg> time` and prefer a release older than the window. Two better-auth patches came out on the same day we installed.
+- **pnpm 12 blocks dependency install scripts until they're allowed.** Prisma needs `prisma` and `@prisma/engines`.
+- **A lockfile that holds a too-new version fails the supply-chain check before any re-resolution.** Remove the package, then add the older version.
+- **Better Auth's `mapProfileToUser` must return `image` as `string | undefined`,** never `null`.
+- **Specs beat plans.** The plan reversed srs §5.1's order (control-character check before whitespace collapsing), which would have rejected pasted tabs. Writing the test first surfaced the conflict.
+- **`next build` evaluates the auth route module,** so the Google and auth env vars must exist at build time (CI uses placeholders).

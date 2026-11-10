@@ -338,3 +338,12 @@ New entries follow the ADR format in `CLAUDE.md`.
 - **Decision:** A. OpenAI is the one paid service. Hosting and the database stay on free tiers (Vercel, Supabase).
 - **Why:** The brief requires OpenAI, and the owner confirmed it is a required exception.
 - **Consequences:** Every fact costs money. The 60-second cache, the lease (one call at a time per user), the `gpt-5.4-mini` default and the 150-token output cap keep that cost small. Rapid movie changes are still unbounded (D18).
+
+## ADR-032: Turn off Cache Components
+
+- **Date:** 2026-11-10 **Status:** accepted
+- **Context:** The Next.js 16.4 template turns on `cacheComponents` and `partialPrefetching`. With them on, reading the session cookie outside `<Suspense>` is a build error, so page guards could only redirect after a static shell had already streamed.
+- **Options:** A / turn both off and redirect on the server before rendering. B / keep them on and wrap every session read in `<Suspense>`. C / keep them on and opt every page out with `export const instant = false`.
+- **Decision:** A. `cacheComponents: false` in `next.config.ts`. `partialPrefetching` is removed too, because Next rejects it without `cacheComponents`.
+- **Why:** Every page in the app is specific to the signed-in user, so there's no shared shell worth caching. Server redirects keep the guard table in architecture §5 exactly as written, with no flash of the wrong page.
+- **Consequences:** No static-shell prefetching. The Next docs say both features will be on everywhere in the next major release, so upgrading to Next 17 means adopting the Suspense pattern (option B).

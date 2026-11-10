@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+  // Every page reads the session, so server redirects beat cached shells (ADR-032).
+  cacheComponents: false,
   turbopack: {
     rules: {
       "*.css": {

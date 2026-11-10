@@ -33,3 +33,35 @@ What exists, how it works, and what is locked in. Entries are appended per sessi
 - Prisma is pinned to 7.10.1, because npm's `latest` tag points at an 8.0 release candidate.
 - `next.config.ts` keeps the template's `cacheComponents: true` and `partialPrefetching: true` for now. This affects how pages read the session (see learnings). The owner decides it before the auth work.
 - The agent never commits or pushes. Each change ends with a commit message for the owner.
+
+---
+
+## 2026-11-10: Data, auth and validation (plan Tasks 3 to 6)
+
+### What exists
+
+- **Database schema** (`prisma/schema.prisma`, migration `20261110181010_init`):
+  - Better Auth's `user`, `session`, `account` and `verification` tables.
+  - Three app columns on `user`: `favoriteMovie` (`VARCHAR(100)`, null until onboarding), and `factLeaseUntil` (`timestamptz`) plus `factLeaseToken` for the generation lease.
+  - A `fact` table: `userId`, `movieTitle`, `movieKey`, `text`, and a `createdAt` set by the database. It's indexed on `(userId, movieKey, createdAt DESC)` and cascades on user delete.
+- **`lib/db.ts`:** one Prisma client on a `pg` pool with 5-second connect and idle timeouts, reused across dev hot reloads. The client is generated into `generated/prisma` (gitignored) by `postinstall`.
+- **`lib/movie.ts`:** `MovieTitleSchema` and `normalizeMovie()`. Trim, collapse whitespace, reject control characters, 1 to 100 characters, and a lowercased key.
+- **`lib/auth.ts`:** Better Auth with the Prisma adapter and Google (`prompt: select_account`). The profile is refreshed on every sign-in. The cookie cache is off, so logout takes effect on the next request.
+- **`lib/dal.ts`:** `getCurrentUser()` and `requireUser()`, the one place a request becomes a user.
+- **`lib/errors.ts`:** `AppError` with five codes, their statuses, and default messages a user can act on.
+- **`lib/contracts.ts`:** Zod schemas for `/api/me`, `/api/me/movie`, `/api/fact` and the error body.
+- **`lib/http.ts`:** `withUser()`, which every API route uses. It checks the session first, returns one error shape, and logs unexpected errors while showing a generic message.
+- **`/api/auth/[...all]`:** Better Auth's handler, plus `lib/auth-client.ts` for the browser.
+- **Tests:** 19 backend tests. The movie rule, the schema against real Postgres, the auth helpers and the route wrapper.
+
+### How it works
+
+- `prisma7.config.ts` is the Prisma 7.10 config file name. It loads `.env` itself and points migrations at `DIRECT_URL`.
+- Backend tests run against `pandoras_test` on the same Docker Postgres. `tests/setup/global-db.ts` creates it if needed and runs `prisma migrate deploy` before the suite. CI sets `TEST_DATABASE_URL` to its own service.
+- Vitest aliases `server-only` to an empty module, because the real package throws outside Next's server bundle.
+
+### Locked in
+
+- ADR-032: `cacheComponents` is off and `partialPrefetching` is removed. Pages read the session and redirect on the server before rendering.
+- better-auth 1.7.18 and the `auth` CLI 1.7.18 are pinned outside pnpm's one-day release-age window.
+- pnpm may run install scripts for `prisma` and `@prisma/engines` only (`pnpm-workspace.yaml`).
