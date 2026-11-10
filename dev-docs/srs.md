@@ -27,7 +27,7 @@ In scope:
 Out of scope:
 - More than one movie per user, lists, ratings, social features, and movie search or metadata lookup (TMDB).
 - Account deletion UI, admin tools, analytics, and email.
-- Rate limiting of movie changes (a documented limit, D18).
+- Rate limiting of movie changes themselves. OpenAI calls are capped per user instead (FR-LIMIT-1, ADR-042).
 - Internationalization. The UI is English only.
 
 ### 1.3 Definitions
@@ -177,6 +177,12 @@ There is one user class: anyone with a Google account. There are no roles or adm
 
 **FR-CON-6 Crash recovery.** A lease whose `factLeaseUntil` has passed must be claimable by the next request.
 
+**FR-LIMIT-1 Generation cap.** While holding the lease and before calling OpenAI, `getFact` must count the user's facts created in the last 10 minutes, across all movies, using the database clock. At 20 or more it must not call OpenAI. Instead it must:
+- return the newest fact for (user, movie key) with `source: "fallback"` and `secondsUntilRefresh: 0`;
+- if there is none, fail with `RATE_LIMITED` (HTTP 429).
+
+The cap leaves normal use alone: one movie refreshed every minute makes 10 facts in 10 minutes. It stops a loop of movie changes from buying unlimited OpenAI calls (ADR-042, supersedes D18).
+
 ### 3.6 Failure handling (Variant A)
 
 **FR-FAIL-1 Timeout.** The OpenAI client must use an 8-second timeout and 0 retries (D14). The function runtime limit on `/api/fact` must be at least 15 seconds.
@@ -193,7 +199,7 @@ There is one user class: anyone with a Google account. There are no roles or adm
 
 **FR-API-1 Endpoints.** The app must expose the three endpoints in §6, each validated with a Zod schema from `lib/contracts.ts`.
 
-**FR-API-2 Error shape.** Every error response must use the matching HTTP status and the body `{ error: { code, message, issues? } }`, where `code` is one of the five codes in §6.4 (D21).
+**FR-API-2 Error shape.** Every error response must use the matching HTTP status and the body `{ error: { code, message, issues? } }`, where `code` is one of the six codes in §6.4 (D21).
 
 **FR-API-3 Session-only identity.** No endpoint may accept a user ID in the path, query or body. The handler must take identity only from `requireUser()` (D7).
 
@@ -348,7 +354,7 @@ Response `200`:
   secondsUntilRefresh: number; // integer 0 to 60, from DB time; 0 for fallback
 }
 ```
-Errors: `401 UNAUTHENTICATED`, `409 ONBOARDING_REQUIRED`, `503 FACT_UNAVAILABLE`.
+Errors: `401 UNAUTHENTICATED`, `409 ONBOARDING_REQUIRED`, `429 RATE_LIMITED`, `503 FACT_UNAVAILABLE`.
 
 ### 6.4 Error codes
 
@@ -357,6 +363,7 @@ Errors: `401 UNAUTHENTICATED`, `409 ONBOARDING_REQUIRED`, `503 FACT_UNAVAILABLE`
 | `UNAUTHENTICATED` | 401 | No valid session |
 | `VALIDATION_ERROR` | 400 | Body fails its schema or the movie rule |
 | `ONBOARDING_REQUIRED` | 409 | Fact requested before a movie is saved |
+| `RATE_LIMITED` | 429 | The generation cap is reached and there's no earlier fact for this movie. Message: "You've asked for a lot of facts. Try again in a few minutes." |
 | `FACT_UNAVAILABLE` | 503 | Generation failed and there's no earlier fact |
 | `INTERNAL` | 500 | Anything unexpected. The message is generic, and details are logged on the server |
 
@@ -372,6 +379,8 @@ Errors: `401 UNAUTHENTICATED`, `409 ONBOARDING_REQUIRED`, `503 FACT_UNAVAILABLE`
 - **NFR-SEC-4** No endpoint accepts a user ID (D7).
 - **NFR-SEC-5** Fact text must be rendered as text, never through `dangerouslySetInnerHTML`.
 - **NFR-SEC-6** Error responses must not include stack traces, SQL, or upstream error bodies.
+- **NFR-SEC-7** Every table must have row level security enabled with no policies. Prisma connects as the table owner and bypasses it, while Supabase's `anon` and `authenticated` roles get no rows through the Data API (ADR-043).
+- **NFR-SEC-8** Every response must forbid framing (`Content-Security-Policy: frame-ancestors 'none'` and `X-Frame-Options: DENY`) and send `X-Content-Type-Options: nosniff` and `Referrer-Policy: strict-origin-when-cross-origin`.
 
 ### 7.2 Performance
 
@@ -420,6 +429,8 @@ Every test below must run in CI (D25, D26). OpenAI is always mocked.
 | T-A6 | Backend, real DB | FR-FAIL-2 | OpenAI throws with an older fact present: returns `fallback`. With none: `FACT_UNAVAILABLE` |
 | T-A7 | Backend, real DB | FR-API-3, NFR-SEC-4 | User B's `getFact` never returns user A's facts; each endpoint returns 401 without a session |
 | T-A8 | Unit | §5.1 | Movie rule: trimming, collapsing, 0/1/100/101 lengths, control characters, the key |
+| T-A9 | Backend, real DB | FR-LIMIT-1 | With 20 facts in 10 minutes, OpenAI isn't called: an earlier fact comes back as `fallback`, otherwise `RATE_LIMITED`. 19 facts still generate |
+| T-A10 | Backend, real DB | NFR-SEC-7 | Every table in `public` has row level security enabled |
 | T-B1 | Frontend, MSW | FR-API-4 | 401 response becomes `ApiError` with `UNAUTHENTICATED` |
 | T-B2 | Frontend, MSW | FR-API-4 | 500 response becomes `ApiError` with `INTERNAL`; a network failure becomes status 0 |
 | T-B3 | Frontend, MSW + RTL | FR-EDIT-4, FR-EDIT-5 | Save shows the new title at once; a 500 restores the old title and shows the toast |
@@ -434,6 +445,7 @@ Every test below must run in CI (D25, D26). OpenAI is always mocked.
 - **DEP-2** Production migrations run with `prisma migrate deploy` using `DIRECT_URL` before or during the deploy.
 - **DEP-3** The Google OAuth client must list the production and local callback URLs: `{BETTER_AUTH_URL}/api/auth/callback/google`.
 - **DEP-4** A `.env.example` must list every variable with a placeholder value and no real secrets.
+- **DEP-5** The Supabase project must not expose the `public` schema through its Data API, and the OpenAI project must have a monthly budget limit.
 
 ## 10. Documentation requirements (brief "Deliverables")
 
@@ -443,7 +455,7 @@ The README must contain:
 - **DOC-3** database migration steps;
 - **DOC-4** a 1 to 2 page architecture overview;
 - **DOC-5** the chosen variant (A) and why, with B described as an extra;
-- **DOC-6** key tradeoffs, including the movie-change limit (D18);
+- **DOC-6** key tradeoffs, including the generation cap (ADR-042);
 - **DOC-7** "what I'd improve with 2 more hours".
 
 The repo also includes:
@@ -473,6 +485,7 @@ The repo also includes:
 | Validate input server side | §5.1, FR-API-1 |
 | Users can't access others' data | FR-API-3, NFR-SEC-4, T-A7 |
 | No secrets on the client | NFR-SEC-1 |
+| Security audit fixes | FR-LIMIT-1, NFR-SEC-7, NFR-SEC-8, DEP-5, T-A9, T-A10 |
 | Missing Google photo or name | FR-DASH-2, FR-DASH-3 |
 | Deliverables | DOC-1 to DOC-9 |
 

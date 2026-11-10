@@ -184,6 +184,8 @@ The holder releases the lease only if the token still matches. There is one leas
 
 ### D18. Movie-change spam is a documented limit
 
+**Status.** Superseded by ADR-042.
+
 **Context.** A new movie always skips the 60-second cache. The lease stops overlapping calls but not calls made one after another, so changing the movie 20 times in a minute costs 20 OpenAI calls.
 
 **Decision.** Accept it and document it in the README as a known limit. The fix (a per-user rate limit) goes under "with 2 more hours".
@@ -487,3 +489,30 @@ New entries follow the ADR format in `CLAUDE.md`.
   - **Phones roll bottom to top.** Below Tailwind's `md` breakpoint the ticket is stacked, so it winds upward into a horizontal roll parked at the top. The core is Sunburst, because the stub at the bottom winds on first.
   - **Direction detection:** `useIsDesktop()` (`useSyncExternalStore` on `matchMedia`) picks the axis. The roll element is keyed by axis so a stale `left` from the server render can't linger.
   - **Tests:** the frontend setup stubs `window.matchMedia`, which jsdom lacks.
+
+## ADR-042: Cap OpenAI calls per user
+
+- **Date:** 2026-11-10 **Status:** accepted (supersedes D18)
+- **Context:** The security audit (F1) showed that switching movie titles skips the 60 second window, so one account could buy an OpenAI call every few seconds. D18 had accepted that as a documented limit.
+- **Options:**
+  - A: keep D18, and rely on an OpenAI budget limit.
+  - B: cap generations per user by counting fact rows, under the lease.
+- **Decision:** B. At 20 or more facts in the last 10 minutes across all movies, `getFact` skips OpenAI. It serves the last fact for the movie as `fallback`, or returns `429 RATE_LIMITED` when there isn't one. The OpenAI budget limit is still set at deploy.
+- **Why:** The budget limit alone lets one user use up the month's quota and break facts for everyone. Counting the fact table needs no new table or dependency, and the lease already serializes a user's requests, so the count can't race.
+- **Consequences:**
+  - A sixth error code, `RATE_LIMITED`, in the contract.
+  - Failed generations don't insert a row, so they don't count. Their cost is small, because they time out at 8 seconds with no retries.
+  - Many Google accounts still multiply the ceiling. The budget limit covers that.
+
+## ADR-043: Row level security on every table
+
+- **Date:** 2026-11-10 **Status:** accepted
+- **Context:** The security audit (F2) showed that Supabase's Data API can serve `public` tables to its `anon` role, and Prisma creates every table there without RLS. Session tokens and Google OAuth tokens would be readable.
+- **Options:**
+  - A: turn the Data API off in the dashboard only.
+  - B: enable RLS with no policies in a migration, and also turn the Data API off.
+- **Decision:** B.
+- **Why:** A dashboard toggle isn't in the repo, so a new project or a teammate could miss it. RLS ships with the schema and a test enforces it. The app is unaffected, because the table owner bypasses RLS.
+- **Consequences:**
+  - Any table added later needs RLS in its own migration, or T-A10 fails.
+  - If the app ever reads through Supabase's client libraries instead of Prisma, it will need real policies.

@@ -24,6 +24,7 @@ describe("AppError", () => {
       UNAUTHENTICATED: 401,
       VALIDATION_ERROR: 400,
       ONBOARDING_REQUIRED: 409,
+      RATE_LIMITED: 429,
       FACT_UNAVAILABLE: 503,
       INTERNAL: 500,
     });
