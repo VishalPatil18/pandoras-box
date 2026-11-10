@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pandoras Box mockups</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Bowlby One stands in for Lateral 800, General Sans for Aeonik Pro (substitutes listed in DESIGN.md). -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&display=swap">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@500,700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Rune icons (design/icons), inlined so the mockup works from file:// -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-box" viewBox="0 0 24 24" fill="none"><path d="M3.30005 7L12 12M12 12L20.7001 7M12 12L12 22M21 7.9999C20.9996 7.64918 20.9071 7.30471 20.7315 7.00106C20.556 6.69742 20.3037 6.44526 20 6.2699L13 2.2699C12.696 2.09437 12.3511 2.00195 12 2.00195C11.6489 2.00195 11.304 2.09437 11 2.2699L4 6.2699C3.69626 6.44526 3.44398 6.69742 3.26846 7.00106C3.09294 7.30471 3.00036 7.64918 3 7.9999V15.9999C3.00036 16.3506 3.09294 16.6951 3.26846 16.9987C3.44398 17.3024 3.69626 17.5545 4 17.7299L11 21.7299C11.304 21.9054 11.6489 21.9979 12 21.9979C12.3511 21.9979 12.696 21.9054 13 21.7299L20 17.7299C20.3037 17.5545 20.556 17.3024 20.7315 16.9987C20.9071 16.6951 20.9996 16.3506 21 15.9999V7.9999Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-circle-alert" viewBox="0 0 24 24" fill="none"><path d="M12 8V12M12 16H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-circle-user" viewBox="0 0 24 24" fill="none"><path d="M7 20.662V19C7 18.4696 7.21071 17.9609 7.58579 17.5858C7.96086 17.2107 8.46957 17 9 17H15C15.5304 17 16.0391 17.2107 16.4142 17.5858C16.7893 17.9609 17 18.4696 17 19V20.662M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM15 10C15 11.6569 13.6569 13 12 13C10.3431 13 9 11.6569 9 10C9 8.34315 10.3431 7 12 7C13.6569 7 15 8.34315 15 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-clapperboard" viewBox="0 0 24 24" fill="none"><path d="M12.2959 3.46411L15.3159 7.42011M2.99995 11L20.2 5.99995L19.4 3.39995C19.1 2.39995 18 1.79995 16.9 2.09995L3.39995 6.09995C2.39995 6.39995 1.79995 7.49995 2.09995 8.59995L2.99995 11ZM2.99995 11L21 11V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19L2.99995 11ZM6.17993 5.27588L9.27993 9.17488" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24" fill="none"><path d="M12 6V12L16 14M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-film" viewBox="0 0 24 24" fill="none"><path d="M7 3V21M3 7.5H7M3 12H21M3 16.5H7M17 3V21M17 7.5H21M17 16.5H21M5 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24" fill="none"><path d="M12 16V12M12 8H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-log-in" viewBox="0 0 24 24" fill="none"><path d="M10 7L15 12L10 17M15 12H3M15 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-log-out" viewBox="0 0 24 24" fill="none"><path d="M16 7L21 12L16 17M21 12H9M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-pencil" viewBox="0 0 24 24" fill="none"><path d="M15 5L19 9M21.1739 6.81189C21.7026 6.28332 21.9997 5.56636 21.9998 4.81875C21.9999 4.07113 21.703 3.3541 21.1744 2.82539C20.6459 2.29668 19.9289 1.99961 19.1813 1.99951C18.4337 1.99942 17.7166 2.29632 17.1879 2.82489L3.84193 16.1739C3.60975 16.4054 3.43805 16.6904 3.34193 17.0039L2.02093 21.3559C1.99509 21.4424 1.99314 21.5342 2.01529 21.6217C2.03743 21.7092 2.08285 21.7891 2.14673 21.8529C2.21061 21.9167 2.29055 21.962 2.37809 21.984C2.46563 22.006 2.55749 22.0039 2.64393 21.9779L6.99693 20.6579C7.3101 20.5626 7.59511 20.392 7.82693 20.1609L21.1739 6.81189Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-refresh-cw" viewBox="0 0 24 24" fill="none"><path d="M3 12C3 9.61305 3.94821 7.32387 5.63604 5.63604C7.32387 3.94821 9.61305 3 12 3C14.516 3.00947 16.931 3.99122 18.74 5.74L21 8M16 8H21V3M21 12C21 14.3869 20.0518 16.6761 18.364 18.364C16.6761 20.0518 14.3869 21 12 21C9.48395 20.9905 7.06897 20.0088 5.26 18.26L3 16M3 21V16H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-rotate-ccw" viewBox="0 0 24 24" fill="none"><path d="M3 12C3 13.78 3.52784 15.5201 4.51677 17.0001C5.50571 18.4802 6.91131 19.6337 8.55585 20.3149C10.2004 20.9961 12.01 21.1743 13.7558 20.8271C15.5016 20.4798 17.1053 19.6226 18.364 18.364C19.6226 17.1053 20.4798 15.5016 20.8271 13.7558C21.1743 12.01 20.9961 10.2004 20.3149 8.55585C19.6337 6.91131 18.4802 5.50571 17.0001 4.51677C15.5201 3.52784 13.78 3 12 3C9.48395 3.00947 7.06897 3.99122 5.26 5.74L3 8M8 8H3V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-sparkles" viewBox="0 0 24 24" fill="none"><g clip-path="url(#clip0_1_2467)"><path d="M20 2V6M22 4H18M11.017 2.81395C11.0598 2.58456 11.1815 2.37737 11.3611 2.22827C11.5406 2.07917 11.7666 1.99756 12 1.99756C12.2333 1.99756 12.4593 2.07917 12.6389 2.22827C12.8184 2.37737 12.9401 2.58456 12.983 2.81395L14.034 8.37195C14.1086 8.7671 14.3006 9.13057 14.585 9.41492C14.8693 9.69928 15.2328 9.89131 15.628 9.96595L21.186 11.017C21.4153 11.0598 21.6225 11.1815 21.7716 11.3611C21.9207 11.5406 22.0023 11.7666 22.0023 12C22.0023 12.2333 21.9207 12.4593 21.7716 12.6389C21.6225 12.8184 21.4153 12.9401 21.186 12.983L15.628 14.034C15.2328 14.1086 14.8693 14.3006 14.585 14.585C14.3006 14.8693 14.1086 15.2328 14.034 15.628L12.983 21.186C12.9401 21.4153 12.8184 21.6225 12.6389 21.7716C12.4593 21.9207 12.2333 22.0023 12 22.0023C11.7666 22.0023 11.5406 21.9207 11.3611 21.7716C11.1815 21.6225 11.0598 21.4153 11.017 21.186L9.96595 15.628C9.89131 15.2328 9.69928 14.8693 9.41492 14.585C9.13057 14.3006 8.7671 14.1086 8.37195 14.034L2.81395 12.983C2.58456 12.9401 2.37737 12.8184 2.22827 12.6389C2.07917 12.4593 1.99756 12.2333 1.99756 12C1.99756 11.7666 2.07917 11.5406 2.22827 11.3611C2.37737 11.1815 2.58456 11.0598 2.81395 11.017L8.37195 9.96595C8.7671 9.89131 9.13057 9.69928 9.41492 9.41492C9.69928 9.13057 9.89131 8.7671 9.96595 8.37195L11.017 2.81395ZM6 20C6 21.1046 5.10457 22 4 22C2.89543 22 2 21.1046 2 20C2 18.8954 2.89543 18 4 18C5.10457 18 6 18.8954 6 20Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g><defs><clipPath id="clip0_1_2467"><rect width="24" height="24" fill="white"/></clipPath></defs></symbol>
+<symbol id="i-triangle-alert" viewBox="0 0 24 24" fill="none"><path d="M12 9V13M12 17H12.01M21.7301 18.0002L13.7301 4.00022C13.5556 3.69243 13.3027 3.43641 12.997 3.25829C12.6913 3.08017 12.3438 2.98633 11.9901 2.98633C11.6363 2.98633 11.2888 3.08017 10.9831 3.25829C10.6774 3.43641 10.4245 3.69243 10.2501 4.00022L2.25005 18.0002C2.07373 18.3056 1.98128 18.6521 1.98206 19.0047C1.98284 19.3573 2.07683 19.7035 2.2545 20.008C2.43217 20.3126 2.6872 20.5648 2.99375 20.7391C3.30029 20.9133 3.64746 21.0034 4.00005 21.0002H20.0001C20.351 20.9999 20.6956 20.9072 20.9993 20.7315C21.3031 20.5558 21.5553 20.3033 21.7306 19.9993C21.9059 19.6954 21.9981 19.3506 21.998 18.9997C21.9979 18.6488 21.9055 18.3041 21.7301 18.0002Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </svg>
+
+  <!-- ============ Landing (signed out) ============ -->
+  <div class="screen" data-screen="landing">
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>One movie</span><svg class="icon"><use href="#i-sparkles"/></svg>
+        <span>A new fact every minute</span><svg class="icon"><use href="#i-sparkles"/></svg>
+        <span>Sign in with Google</span><svg class="icon"><use href="#i-sparkles"/></svg>
+        <span>One movie</span><svg class="icon"><use href="#i-sparkles"/></svg>
+        <span>A new fact every minute</span><svg class="icon"><use href="#i-sparkles"/></svg>
+        <span>Sign in with Google</span><svg class="icon"><use href="#i-sparkles"/></svg>
+      </div>
+    </div>
+
+    <section class="band band-sky hero">
+      <header class="nav">
+        <a class="logo" href="#" aria-label="Pandoras Box home"><svg class="icon"><use href="#i-box"/></svg></a>
+      </header>
+
+      <div class="hero-stage">
+        <!-- Flat stand-in for the 3D ribbon: one Electric Blue tube that runs behind the wordmark. -->
+        <svg class="ribbon" viewBox="0 0 1200 520" aria-hidden="true" preserveAspectRatio="none">
+          <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" result="n"/><feColorMatrix in="n" type="saturate" values="0"/><feComposite in2="SourceGraphic" operator="in"/><feBlend in="SourceGraphic" mode="multiply"/></filter>
+          <path d="M-40 380 C 180 120, 420 520, 640 260 S 1020 40, 1260 300" stroke="#000" stroke-width="92" fill="none" stroke-linecap="round"/>
+          <path d="M-40 380 C 180 120, 420 520, 640 260 S 1020 40, 1260 300" stroke="#4da2ff" stroke-width="90" fill="none" stroke-linecap="round" filter="url(#grain)"/>
+        </svg>
+        <h1 class="wordmark">Pandoras<br>Box</h1>
+        <span class="sticker s-ember" style="--r:-12deg; top:6%; right:14%"><svg class="icon"><use href="#i-clapperboard"/></svg></span>
+        <span class="sticker s-sun" style="--r:9deg; top:46%; right:4%"><svg class="icon"><use href="#i-sparkles"/></svg></span>
+        <span class="sticker s-violet" style="--r:-6deg; bottom:4%; left:46%"><svg class="icon"><use href="#i-film"/></svg></span>
+      </div>
+
+      <div class="hero-foot">
+        <p class="tagline">Name one movie you love. Get a piece of trivia about it you probably haven't heard.</p>
+        <!-- cult-ui: halo-button, restyled as the Filled CTA -->
+        <button class="btn btn-solid" type="button" data-action="signin">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+          Sign in with Google
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ Onboarding (first time only) ============ -->
+  <div class="screen" data-screen="onboarding" hidden>
+    <section class="band band-white onboard">
+      <header class="nav">
+        <span class="logo" aria-hidden="true"><svg class="icon"><use href="#i-box"/></svg></span>
+      </header>
+      <div class="onboard-grid">
+        <!-- cult-ui: halo-field (label above, helper, error below) -->
+        <form class="field-form" novalidate data-form="onboarding">
+          <h1 class="heading">What's your favorite movie?</h1>
+          <div class="field">
+            <label for="onboard-input">Favorite movie</label>
+            <input id="onboard-input" class="input" name="movie" autocomplete="off" placeholder="Spirited Away" maxlength="140" aria-describedby="onboard-help onboard-error">
+            <p class="help" id="onboard-help">Just one. You can change it later from your dashboard.</p>
+            <p class="error" id="onboard-error" role="alert" hidden><svg class="icon"><use href="#i-triangle-alert"/></svg><span></span></p>
+          </div>
+          <button class="btn btn-solid" type="submit">Save and continue</button>
+        </form>
+        <div class="onboard-art" aria-hidden="true">
+          <span class="sticker sticker-lg s-lavender" style="--r:-8deg"><svg class="icon"><use href="#i-clapperboard"/></svg></span>
+          <span class="sticker s-mint" style="--r:12deg; top:8%; right:10%"><svg class="icon"><use href="#i-check"/></svg></span>
+          <span class="sticker s-ember" style="--r:-14deg; bottom:6%; left:4%"><svg class="icon"><use href="#i-film"/></svg></span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ Dashboard ============ -->
+  <div class="screen" data-screen="dashboard" hidden>
+    <section class="band band-sky dash-top">
+      <header class="nav">
+        <span class="logo" aria-hidden="true"><svg class="icon"><use href="#i-box"/></svg></span>
+        <div class="nav-right">
+          <!-- cult-ui: collab-avatar for the photo, falls back to initials -->
+          <div class="profile-pill">
+            <span class="avatar" data-avatar><img alt="" src="https://picsum.photos/seed/vishal-patil/96/96" width="36" height="36" data-avatar-img><span data-initials></span></span>
+            <span class="who"><span class="who-name" data-name></span><span class="who-email">vishal@example.com</span></span>
+          </div>
+          <button class="btn btn-outline" type="button" data-action="logout"><svg class="icon"><use href="#i-log-out"/></svg>Log out</button>
+        </div>
+      </header>
+
+      <!-- cult-ui: morph-surface, the title morphs into its edit field -->
+      <div class="movie" data-movie>
+        <p class="movie-label" id="movie-label">Your favorite movie</p>
+        <div class="movie-view" data-movie-view>
+          <h1 class="movie-title" data-movie-title>Inception</h1>
+          <button class="btn btn-outline btn-sm" type="button" data-action="edit" aria-describedby="movie-label"><svg class="icon"><use href="#i-pencil"/></svg>Edit</button>
+        </div>
+        <form class="movie-edit" data-form="edit" novalidate hidden>
+          <label class="visually-hidden" for="edit-input">Favorite movie</label>
+          <input id="edit-input" class="input input-xl" name="movie" autocomplete="off" maxlength="140" aria-describedby="edit-error">
+          <button class="btn btn-solid" type="submit"><svg class="icon"><use href="#i-check"/></svg>Save</button>
+          <button class="btn btn-outline" type="button" data-action="cancel"><svg class="icon"><use href="#i-x"/></svg>Cancel</button>
+          <p class="error" id="edit-error" role="alert" hidden><svg class="icon"><use href="#i-triangle-alert"/></svg><span></span></p>
+        </form>
+        <p class="saving" data-saving hidden><svg class="icon spin"><use href="#i-refresh-cw"/></svg>Saving</p>
+      </div>
+    </section>
+
+    <section class="band band-white dash-fact">
+      <!-- cult-ui: cutout-card, shaped as a ticket with a tear-off stub -->
+      <article class="ticket" data-fact aria-live="polite" aria-busy="false">
+        <div class="ticket-body">
+          <div class="skeleton" data-state="loading"><span></span><span></span><span></span></div>
+          <p class="fact-text" data-fact-text data-state="fresh stale"></p>
+
+          <p class="notice" data-state="stale"><span class="dot s-lavender"><svg class="icon"><use href="#i-info"/></svg></span>Couldn't get a fresh fact, so here's your last one.</p>
+
+          <div class="fact-error" data-state="error">
+            <span class="sticker sticker-sm s-ember" style="--r:-6deg; position:static"><svg class="icon"><use href="#i-triangle-alert"/></svg></span>
+            <p>Couldn't load a fact. OpenAI didn't answer in time.</p>
+            <button class="btn btn-solid btn-sm" type="button" data-action="retry"><svg class="icon"><use href="#i-rotate-ccw"/></svg>Try again</button>
+          </div>
+
+          <div class="ticket-meta" data-state="fresh stale">
+            <span class="meta"><svg class="icon"><use href="#i-clock"/></svg><span data-age></span></span>
+            <!-- cult-ui: halo-badge -->
+            <span class="badge"><svg class="icon"><use href="#i-sparkles"/></svg>AI-generated, may be inaccurate</span>
+          </div>
+        </div>
+        <div class="ticket-stub">
+          <p class="stub-title" data-stub-movie>Inception</p>
+        </div>
+        <span class="notch notch-top" aria-hidden="true"></span>
+        <span class="notch notch-bottom" aria-hidden="true"></span>
+      </article>
+
+      <div class="fact-actions">
+        <!-- cult-ui: bg-animate-button behavior, rolling-number for the countdown digits -->
+        <button class="btn btn-solid" type="button" data-action="new-fact" data-new-fact><svg class="icon" data-new-fact-icon><use href="#i-clock"/></svg><span data-new-fact-label></span></button>
+      </div>
+    </section>
+  </div>
+
+  <!-- cult-ui: halo-toast -->
+  <div class="toast" role="status" aria-live="polite" data-toast hidden><span class="dot s-ember"><svg class="icon"><use href="#i-x"/></svg></span><span data-toast-text></span></div>
+
+  <!-- Review controls, not part of the product -->
+  <aside class="review-bar" aria-label="Mockup controls">
+    <label>Screen
+      <select data-control="screen">
+        <option value="landing">Landing</option>
+        <option value="onboarding">Onboarding</option>
+        <option value="dashboard">Dashboard</option>
+      </select>
+    </label>
+    <label>Fact state
+      <select data-control="fact">
+        <option value="fresh">Fresh</option>
+        <option value="loading">Loading</option>
+        <option value="stale">Stale fallback</option>
+        <option value="error">Error</option>
+      </select>
+    </label>
+    <label class="check"><input type="checkbox" data-control="fail"> Make saves fail</label>
+    <label class="check"><input type="checkbox" data-control="photo" checked> Has photo</label>
+    <label class="check"><input type="checkbox" data-control="name" checked> Has name</label>
+  </aside>
+
+  <script src="mocks.js"></script>
+</body>
+</html>

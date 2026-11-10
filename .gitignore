@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js and build output
+.next/
+out/
+build/
+next-env.d.ts
+*.tsbuildinfo
+
+# Prisma generated client
+generated/
+
+# Environment files (keep the example)
+.env
+.env.*
+!.env.example
+
+# Tests and coverage
+coverage/
+test-results/
+playwright-report/
+
+# Deploy
+.vercel/
+
+# Logs
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+*.log
+
+# OS and editor
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Local AI tooling and design-checker state
+.claude/
+.impeccable/
+design/mocks/.impeccable/
