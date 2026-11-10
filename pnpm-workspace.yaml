@@ -1,4 +1,7 @@
 allowBuilds:
+  # Prisma downloads its migration engine on install.
+  "@prisma/engines": true
+  prisma: true
   sharp: false
   unrs-resolver: false
 minimumReleaseAgeExclude:
