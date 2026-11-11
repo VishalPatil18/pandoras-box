@@ -85,4 +85,6 @@ About 4 minutes 30 seconds. Each segment lists what to show on screen, then what
 >
 > With two more hours, I'd add a TMDB lookup for ambiguous titles, Playwright tests through the real sign-in, and a shared store for rate limits.
 >
-> The README, the decision log and the security audit are all in the repo. Thanks for watching.
+> Thank you for giving me this opportunity to work on this excercise. I hope this helps you understand my skillset and what I bring to the table. I would love to move ahead in process and interview for the position. To know more aout me checkout vishalpatil.tech.
+>
+> Thanks for watching. 

@@ -1,0 +1,113 @@
+// The narration from dev-docs/video-script.md, one entry per sentence.
+// `say` is what the voice reads when it differs from the caption (spelled out acronyms, the URL).
+export type Line = { id: string; text: string; say?: string };
+export type Section = { id: string; chapter: string; title: string; lines: Line[] };
+
+export const SECTIONS: Section[] = [
+  {
+    id: "app",
+    chapter: "01",
+    title: "The app",
+    lines: [
+      { id: "app-1", text: "This is Pandoras Box." },
+      { id: "app-2", text: "You sign in with Google, name your favorite movie, and get a piece of AI trivia about it." },
+      { id: "app-3", text: "Onboarding checks the title on the server." },
+      { id: "app-4", text: "Blank and overlong titles get a message, and accented or non-English titles are kept exactly as typed." },
+      { id: "app-5", text: "The dashboard shows my Google profile, my movie, and the fact on a ticket." },
+      { id: "app-6", text: "The ticket rolls while the fact prints, and the badge reminds you it's AI-generated." },
+    ],
+  },
+  {
+    id: "schema",
+    chapter: "02",
+    title: "The schema",
+    lines: [
+      { id: "sch-1", text: "Better Auth owns the user, session and account tables." },
+      { id: "sch-2", text: "I added three columns to user: the favorite movie, and two columns for a generation lease I'll get to in a second." },
+      { id: "sch-3", text: "Facts aren't one cached value." },
+      { id: "sch-4", text: "Every generated fact is a new row, with the title as typed, a lowercased key, and a timestamp the database sets." },
+      { id: "sch-5", text: "That history earns its keep three ways." },
+      { id: "sch-6", text: "The newest row is the cache." },
+      { id: "sch-7", text: "Older rows are the fallback when OpenAI fails." },
+      { id: "sch-8", text: "And the last fact goes into the prompt so the next one is different." },
+      { id: "sch-9", text: "Changing the movie changes the key, so the old cache stops matching on its own." },
+    ],
+  },
+  {
+    id: "lease",
+    chapter: "03",
+    title: "The lease",
+    lines: [
+      { id: "lea-1", text: "Variant A is about one rule: at most one fact a minute, even when requests race." },
+      { id: "lea-2", text: "First, a fresh check. Is there a fact under 60 seconds old?" },
+      { id: "lea-3", text: "The age comes from Postgres now(), so every server agrees.", say: "The age comes from Postgres now, so every server agrees." },
+      { id: "lea-4", text: "If not, the request claims a lease with one conditional UPDATE." },
+      { id: "lea-5", text: "It sets a 15 second expiry and a random token, but only where no live lease exists." },
+      { id: "lea-6", text: "Postgres row locking means exactly one concurrent request wins." },
+      { id: "lea-7", text: "The winner calls OpenAI, stores the fact, and releases the lease in a finally, checking its own token so it can't clear someone else's claim." },
+      { id: "lea-8", text: "The losers poll every half second and return the winner's fact." },
+      { id: "lea-9", text: "Here are two tabs reloading at the same moment." },
+      { id: "lea-10", text: "Same fact in both, and one new row in the database." },
+      { id: "lea-11", text: "Why not something simpler?" },
+      { id: "lea-12", text: "An in-memory lock breaks with two servers." },
+      { id: "lea-13", text: "A unique constraint stops the duplicate row, not the duplicate OpenAI call." },
+      { id: "lea-14", text: "An advisory lock holds a connection open for the whole call." },
+      { id: "lea-15", text: "The lease holds nothing during the slow part, so it works across Vercel instances and through Supabase's pooler." },
+      { id: "lea-16", text: "The test for this fires five parallel requests and asserts exactly one OpenAI call." },
+      { id: "lea-17", text: "It failed before the lease existed, which is how I know the guard does something." },
+    ],
+  },
+  {
+    id: "failure",
+    chapter: "04",
+    title: "When OpenAI fails",
+    lines: [
+      { id: "fail-1", text: "The OpenAI SDK defaults to a ten minute timeout with two retries." },
+      { id: "fail-2", text: "That would hang the dashboard, so it's 8 seconds and no retries." },
+      { id: "fail-3", text: "Your own click is the retry." },
+      { id: "fail-4", text: "If generation fails, you get your last fact with a notice saying so." },
+      { id: "fail-5", text: "With no earlier fact, you get a clear message and a Try again button." },
+      { id: "fail-6", text: "The real error goes to the server log, never to the browser." },
+      { id: "fail-7", text: "Switching movies skips the 60 second window, so there's also a cap: 20 new facts per 10 minutes per account." },
+      { id: "fail-8", text: "Past it, you get your last fact, or a message to try again later." },
+    ],
+  },
+  {
+    id: "browser",
+    chapter: "05",
+    title: "The browser side",
+    lines: [
+      { id: "web-1", text: "Variant B is built as an extra." },
+      { id: "web-2", text: "Every API response goes through the same Zod schema the server uses, and every failure becomes one typed error." },
+      { id: "web-3", text: "TanStack Query keeps a fact for 30 seconds, keyed by movie, so switching tabs costs nothing." },
+      { id: "web-4", text: "The server tells the browser how many seconds until a new fact is allowed, and the button counts that down." },
+      { id: "web-5", text: "Editing the movie is optimistic." },
+      { id: "web-6", text: "The new title shows at once and the fact query pauses." },
+      { id: "web-7", text: "If the save works, the new movie's fact loads." },
+      { id: "web-8", text: "If it fails, the old title comes back with a toast." },
+    ],
+  },
+  {
+    id: "tradeoffs",
+    chapter: "06",
+    title: "Tradeoffs",
+    lines: [
+      { id: "tr-1", text: "A few tradeoffs." },
+      { id: "tr-2", text: "Session checks sit next to the data instead of in middleware, because of recent middleware bypass CVEs.", say: "Session checks sit next to the data instead of in middleware, because of recent middleware bypass C V Es." },
+      { id: "tr-3", text: "Waiters sit in a function for a few seconds instead of failing fast, so two tabs agree." },
+      { id: "tr-4", text: "With two more hours, I'd add a TMDB lookup for ambiguous titles, Playwright tests through the real sign-in, and a shared store for rate limits.", say: "With two more hours, I'd add a T M D B lookup for ambiguous titles, Playwright tests through the real sign-in, and a shared store for rate limits." },
+    ],
+  },
+  {
+    id: "outro",
+    chapter: "07",
+    title: "Thank you",
+    lines: [
+      { id: "end-1", text: "Thank you for giving me this opportunity to work on this exercise." },
+      { id: "end-2", text: "I hope this helps you understand my skillset and what I bring to the table." },
+      { id: "end-3", text: "I would love to move ahead in the process and interview for the position." },
+      { id: "end-4", text: "To know more about me, check out vishalpatil.tech.", say: "To know more about me, check out vishal patil dot tech." },
+      { id: "end-5", text: "Thanks for watching." },
+    ],
+  },
+];

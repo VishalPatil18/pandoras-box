@@ -6,8 +6,8 @@ import { OnThisPage } from "@/components/docs/on-this-page";
 import { REPO_URL } from "@/components/landing/hero";
 import logo from "@/design/logo/pandoras-box.svg";
 
-// Paste the unlisted walkthrough's YouTube video ID here, for example "a1B2c3D4e5F".
-const WALKTHROUGH_VIDEO_ID: string | null = null;
+// The walkthrough on YouTube: https://youtu.be/hk047uCOHls
+const WALKTHROUGH_VIDEO_ID: string | null = "hk047uCOHls";
 
 const COLUMN = "mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8";
 
@@ -54,7 +54,7 @@ export default function DocsPage() {
             </h1>
           </div>
 
-          <div className="mt-8 w-full max-w-[720px] md:mt-10">
+          <div className="mt-8 mx-auto w-full max-w-[720px] md:mt-10">
             <Walkthrough videoId={WALKTHROUGH_VIDEO_ID} />
           </div>
         </div>

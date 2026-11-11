@@ -6,10 +6,10 @@
 
 <p align="center">Sign in with Google, name your favorite movie, and get a piece of AI-generated trivia about it. Ask for another fact once a minute.</p>
 
-<!-- Replace VIDEO_ID (twice) with the YouTube video ID, the same one set in app/docs/page.tsx. GitHub blocks iframes, so the thumbnail links out to YouTube. -->
+<!-- GitHub blocks iframes, so the thumbnail links out to YouTube. The same video ID is set in app/docs/page.tsx. -->
 <p align="center">
-  <a href="https://www.youtube.com/watch?v=VIDEO_ID">
-    <img src="https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg" width="640" alt="Watch the 4 minute Pandoras Box walkthrough on YouTube">
+  <a href="https://youtu.be/hk047uCOHls">
+    <img src="dev-docs/walkthrough-thumbnail.jpg" width="640" alt="Watch the 5 minute Pandoras Box walkthrough on YouTube">
   </a>
   <br>
   <sub>Walkthrough video: the app, the schema, the lease and the failure handling. Click to watch on YouTube.</sub>

@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     ".claude/**",
     ".impeccable/**",
     "design/**",
+    // The walkthrough video is a separate Remotion project with its own lint setup.
+    "video/**",
   ]),
 ]);
 

@@ -1,0 +1,13 @@
+node_modules
+dist
+.DS_Store
+.env
+
+# Ignore the output video from Git but not videos you import into src/.
+out
+
+# Capture scratch frames
+.capture-tmp
+
+# Licensed music (Artlist): keep the raw track out of git
+public/music/

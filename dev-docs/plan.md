@@ -584,5 +584,5 @@ The owner does the account steps, and the agent prepares the commands and checks
   - the failure fallback (30 s)
   - the client cache, countdown and optimistic edit (45 s)
   - tradeoffs and next steps (30 s)
-- [ ] **Step 2 (owner):** Record the video and link it in the README.
+- [x] **Step 2 (owner):** Record the video and link it in the README.
 - [ ] **Step 3:** Checkpoint: `docs: add walkthrough video script and link`

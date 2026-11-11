@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Pandoras Box">
+  <defs>
+    <linearGradient id="pb-dusk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#355BC2"/>
+      <stop offset=".55" stop-color="#6C77D5"/>
+      <stop offset="1" stop-color="#F7B9A6"/>
+    </linearGradient>
+  </defs>
+  <g stroke="#000" stroke-width="2.5" stroke-linejoin="round">
+    <path d="M8 22 L32 14 L27 4 L3 12 Z" fill="#355BC2"/>
+    <path d="M32 14 L56 22 L61 12 L37 4 Z" fill="#355BC2"/>
+    <path d="M8 22 L32 14 L56 22 L32 30 Z" fill="#0E2463"/>
+    <path d="M8 22 L32 30 L32 59 L8 51 Z" fill="#2346A0"/>
+    <path d="M32 30 L56 22 L56 51 L32 59 Z" fill="#173A8C"/>
+    <path d="M12.5 29 L27.5 34 L27.5 51.5 L12.5 46.5 Z" fill="url(#pb-dusk)" stroke-width="2"/>
+  </g>
+  <circle cx="22.5" cy="44" r="2.6" fill="#FFD731"/>
+</svg>

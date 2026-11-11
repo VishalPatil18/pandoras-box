@@ -200,3 +200,20 @@ What exists, how it works, and what is locked in. Entries are appended per sessi
 - Change a diagram, then run `pnpm docs:diagrams`. A plain `pnpm test` fails while a file is stale.
 - A new ADR goes in both `design-decisions.md` and `components/docs/decisions.tsx`.
 - The owner pastes the YouTube video ID into `WALKTHROUGH_VIDEO_ID` once the video is uploaded.
+
+---
+
+## 2026-11-10: Walkthrough video
+
+### What exists
+
+- **The video:** https://youtu.be/hk047uCOHls, 5:26. Narration follows `dev-docs/video-script.md`.
+- **`video/`:** a separate Remotion project that builds it. Real app recordings with a drawn cursor, code excerpts read from the repo, narration from Fish Audio, captions, and a looping piano bed. `video/README.md` covers how to regenerate each part.
+- **`/docs`:** `WALKTHROUGH_VIDEO_ID` is set, so the page embeds the video instead of the placeholder.
+- **README:** the thumbnail is `dev-docs/walkthrough-thumbnail.jpg`, a frame from the render, linking to YouTube.
+
+### Locked in
+
+- The root `tsconfig.json`, ESLint config and `.prettierignore` exclude `video/`. It has its own dependencies and tooling.
+- The music file is gitignored (`video/public/music/`); its license doesn't allow redistributing it.
+

@@ -122,7 +122,7 @@ Evaluation emphasis: API contract clarity · typed client design · loading/erro
 - [ ] GitHub repository.
 - [ ] README: setup · env vars · DB migration steps · architecture overview (1 to 2 pages) · variant chosen (A) + why, with B as extra · key tradeoffs · "with 2 more hours I'd…".
 - [ ] AI-usage note (bullets).
-- [ ] 3 to 5 min walkthrough video of key decisions.
+- [x] 3 to 5 min walkthrough video of key decisions.
 
 ### 5.9 Evaluation criteria to self-check against before submission
 
@@ -213,7 +213,7 @@ Each step has an output and an exit gate. A step doesn't start until the previou
 
 - [ ] README (all §5.8 items).
 - [ ] AI-usage note.
-- [ ] 3 to 5 min walkthrough video script + recording.
+- [x] 3 to 5 min walkthrough video script + recording.
 
 ---
 
